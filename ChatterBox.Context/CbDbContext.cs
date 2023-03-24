@@ -10,8 +10,6 @@ namespace ChatterBox.Context
 
         public DbSet<Message> Messages { get; set; }
 
-        public DbSet<ChatUser> ChatUsers { get; set; }
-
         public CbDbContext(DbContextOptions<CbDbContext> options) : base(options)
         {
 
