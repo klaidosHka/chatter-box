@@ -116,7 +116,7 @@ namespace ChatterBox.Application.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
-                return LocalRedirect(returnUrl);
+                return LocalRedirect("/Main");
             }
             if (result.IsLockedOut)
             {
@@ -183,7 +183,7 @@ namespace ChatterBox.Application.Areas.Identity.Pages.Account
                         }
 
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
-                        return LocalRedirect(returnUrl);
+                        return LocalRedirect("/Main");
                     }
                 }
                 foreach (var error in result.Errors)
