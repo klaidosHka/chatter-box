@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace ChatterBox.Application
 {
@@ -35,7 +36,24 @@ namespace ChatterBox.Application
 
             builder.Services
                 .AddAuthentication()
-                .AddCookie()
+                .AddCookie(o =>
+                {
+                    o.AccessDeniedPath = "/Identity/Account/AccessDenied";
+
+                    o.Cookie = new CookieBuilder
+                    {
+                        SameSite = SameSiteMode.Strict,
+                        SecurePolicy = CookieSecurePolicy.Always,
+                        IsEssential = true,
+                        HttpOnly = true,
+                        Name = "ChatterBoxCookie"
+                    };
+
+                    o.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                    o.LoginPath = "/Identity/Account/Login";
+                    o.SlidingExpiration = true;
+
+                })
                 .AddGoogle(o =>
                 {
                     o.ClientId = builder.Configuration["Auth:Google:ClientId"];
