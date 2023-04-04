@@ -11,7 +11,7 @@ namespace ChatterBox.Application
         {
             builder.Services.AddDbContext<CbDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseAWS"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseAzure"));
             });
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
