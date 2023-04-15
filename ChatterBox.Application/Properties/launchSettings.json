@@ -1,29 +1,13 @@
 {
   "profiles": {
-    "ChatterBox.Application": {
+    "Start": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:44340"
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "workingDirectory": "D:\\all shit\\_code\\C#\\ChatterBox\\ChatterBox.Application",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    }
-  },
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:44340",
-      "sslPort": 44340
+      "applicationUrl": "https://localhost:44340;https://localhost:9999"
     }
   }
 }
