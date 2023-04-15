@@ -25,7 +25,8 @@ namespace ChatterBox.Services.Extensions
                 .AddRazorPages()
                 .AddRazorPagesOptions(o =>
                 {
-                    o.Conventions.AddAreaPageRoute("Identity", "/Account/Login", "");
+                    o.Conventions.AuthorizeAreaPage("Main", "/Index");
+                    o.Conventions.AddAreaPageRoute("Identity", "/Account/Login", string.Empty);
                 });
 
             builder.Services
