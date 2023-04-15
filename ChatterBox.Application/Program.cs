@@ -1,14 +1,16 @@
 using ChatterBox.Application;
+using ChatterBox.Services.Extensions;
 
-/*
- * Application is built within `WebAppExtensions.cs`.
- * 
- * Following two chained methods before the #Run
- * method call execute the main start-up logic.
- */
-
-WebApplication
-    .CreateBuilder(args)
-    .BuildAppWithDatabaseAndGoogleAuth()
-    .SetupApplicationRoutingAndAuth()
-    .Run();
+try
+{
+    WebApplication
+        .CreateBuilder(args)
+        .ConfigureServices()
+        .ConfigureAuthServiceAndBuild()
+        .SetupCrucialSettings()
+        .Run();
+}
+catch (Exception e) when (e is not OperationCanceledException && e.GetType().Name != "StopTheHostException")
+{
+    Console.WriteLine($"Error has occurred and the program has been killed. Message: {e.Message}");
+}
