@@ -1,21 +1,32 @@
 ﻿using ChatterBox.Context;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace ChatterBox.Application
+namespace ChatterBox.Services.Extensions
 {
-    public static class WebAppExtensions
+    public static class WebAppBuilderExtensions
     {
-        public static WebApplication BuildAppWithDatabaseAndGoogleAuth(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
         {
-            builder.Services.AddDbContext<CbDbContext>(options =>
+            // Database & Auth
+            builder.Services.AddDbContext<CbDbContext>(o =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseAzure"));
+                o.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseAzure"));
             });
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+            builder.Services
+                .AddRazorPages()
+                .AddRazorPagesOptions(o =>
+                {
+                    o.Conventions.AddAreaPageRoute("Identity", "/Account/Login", "");
+                });
 
             builder.Services
                 .AddDefaultIdentity<IdentityUser>(o =>
@@ -27,13 +38,15 @@ namespace ChatterBox.Application
                 })
                 .AddEntityFrameworkStores<CbDbContext>();
 
-            builder.Services
-                .AddRazorPages()
-                .AddRazorPagesOptions(options =>
-                {
-                    options.Conventions.AddAreaPageRoute("Identity", "/Account/Login", "");
-                });
+            // Services
 
+            // Repositories
+
+            return builder;
+        }
+
+        public static WebApplication ConfigureAuthServiceAndBuild(this WebApplicationBuilder builder)
+        {
             builder.Services
                 .AddAuthentication()
                 .AddCookie(o =>
@@ -62,30 +75,6 @@ namespace ChatterBox.Application
                 });
 
             return builder.Build();
-        }
-
-        public static WebApplication SetupApplicationRoutingAndAuth(this WebApplication app)
-        {
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
-
-            app
-                .UseHttpsRedirection()
-                .UseStaticFiles()
-                .UseRouting()
-                .UseAuthentication()
-                .UseAuthorization();
-
-            app.MapRazorPages();
-
-            return app;
         }
     }
 }
