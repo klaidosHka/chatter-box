@@ -26,14 +26,14 @@ namespace ChatterBox.Services.Services
                 .AsNoTracking();
         }
 
-        public void Import(ChatGroupRegistrar registrar)
+        public async Task ImportAsync(ChatGroupRegistrar registrar)
         {
-            _registrarRepository.Import(registrar);
+            await _registrarRepository.ImportAsync(registrar);
         }
 
-        public void Import(IEnumerable<ChatGroupRegistrar> registrars)
+        public async Task ImportAsync(IEnumerable<ChatGroupRegistrar> registrars)
         {
-            _registrarRepository.Import(registrars);
+            await _registrarRepository.ImportAsync(registrars);
         }
     }
 }

@@ -7,7 +7,6 @@ using ChatterBox.Services.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +22,8 @@ namespace ChatterBox.Services.Extensions
             {
                 o.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseAzure"));
             },
-                contextLifetime: ServiceLifetime.Singleton,
-                optionsLifetime: ServiceLifetime.Singleton
+                contextLifetime: ServiceLifetime.Transient,
+                optionsLifetime: ServiceLifetime.Transient
             );
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -34,7 +33,6 @@ namespace ChatterBox.Services.Extensions
                 .AddRazorPagesOptions(o =>
                 {
                     o.Conventions.AuthorizeAreaPage("Main", "/Index");
-                    o.Conventions.AddAreaPageRoute("Identity", "/Account/Login", string.Empty);
                 });
 
             builder.Services
@@ -47,19 +45,20 @@ namespace ChatterBox.Services.Extensions
                 })
                 .AddEntityFrameworkStores<CbDbContext>();
 
+            // SignalR
+            builder.Services.AddSignalR();
+
             // Services
             builder.Services.AddSingleton<IChatGroupMessageService, ChatGroupMessageService>();
             builder.Services.AddSingleton<IChatGroupRegistrarService, ChatGroupRegistrarService>();
             builder.Services.AddSingleton<IChatGroupService, ChatGroupService>();
             builder.Services.AddSingleton<IChatMessageService, ChatMessageService>();
-            builder.Services.AddSingleton<IChatUserService, ChatUserService>();
 
             // Repositories
             builder.Services.AddSingleton<IChatGroupMessageRepository, ChatGroupMessageRepository>();
             builder.Services.AddSingleton<IChatGroupRegistrarRepository, ChatGroupRegistrarRepository>();
             builder.Services.AddSingleton<IChatGroupRepository, ChatGroupRepository>();
             builder.Services.AddSingleton<IChatMessageRepository, ChatMessageRepository>();
-            builder.Services.AddSingleton<IChatUserRepository, ChatUserRepository>();
 
             return builder;
         }

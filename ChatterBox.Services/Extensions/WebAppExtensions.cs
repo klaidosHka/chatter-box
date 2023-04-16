@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using ChatterBox.Context;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 
 namespace ChatterBox.Application
 {
     public static class WebAppExtensions
     {
-        public static WebApplication SetupCrucialSettings(this WebApplication application)
+        public static WebApplication UseConfiguredSettings(this WebApplication application)
         {
             if (application.Environment.IsDevelopment())
             {
@@ -25,6 +26,11 @@ namespace ChatterBox.Application
                 .UseAuthorization();
 
             application.MapRazorPages();
+
+            application.UseEndpoints(ep =>
+            {
+                ep.MapHub<ChatHub>("/Main/Index");
+            });
 
             return application;
         }

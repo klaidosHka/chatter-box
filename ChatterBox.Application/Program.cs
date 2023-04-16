@@ -7,10 +7,12 @@ try
         .CreateBuilder(args)
         .ConfigureServices()
         .ConfigureAuthServiceAndBuild()
-        .SetupCrucialSettings()
+        .UseConfiguredSettings()
         .Run();
 }
 catch (Exception e) when (e is not OperationCanceledException && e.GetType().Name != "StopTheHostException")
 {
     Console.WriteLine($"Error has occurred and the program has been killed. Message: {e.Message}");
+
+    Console.ReadKey();
 }

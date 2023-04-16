@@ -9,16 +9,28 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-</head>
-
-<body class="chatter-box-background">
-    <div>
-        @RenderBody()
-    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="https://kit.fontawesome.com/633356e7af.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="position-fixed chatter-box-background w-100 h-100">
+    <div class="h-100">
+        <header class="chatter-box-header">
+
+        </header>
+    
+        <div class="w-100 mh-100">
+            @RenderBody()
+        </div>
+
+        <footer class="fixed-bottom chatter-box-footer">
+
+        </footer>
+    </div>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,16 +1,11 @@
 ﻿@page
-@using ChatterBox.Interfaces.Services;
-
-@inject IChatUserService _chatUserService;
 
 @model ChatterBox.Application.Areas.Main.Pages.IndexModel
 
 @{
-    var currentUser = await Model.GetCurrentUserAsync();
-    var users = Model.GetUsers();
+    Model.ChatUser = await Model.GetCurrentUserAsync();
 }
 
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 <link href="~/css/main.css" rel="stylesheet" />
 
 <div class="d-flex align-items-center vh-100">
@@ -20,37 +15,36 @@
                 <div class="card chat-app">
                     <div id="plist" class="people-list">
                         <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fa fa-search"></i></span>
-                            </div>
                             <input type="text" class="form-control" placeholder="Search...">
                         </div>
 
-                        @foreach (var user in users)
+                        @foreach (var user in Model.GetUsers())
                         {
                             <ul class="list-unstyled chat-list mt-2 mb-0">
                                 <li class="clearfix">
                                     <img src="~/img/profile-circle.svg" alt="avatar">
+
                                     <div class="about">
-                                        <div class="name">@user.Username</div>
+                                        <div class="name">@user.UserName</div>
+
                                         <div class="status">
-                                            <i class="fa fa-circle @(user.Online ? "online" : "offline")">
+                                            <i class="fa-regular fa-circle @(user.Online ? "online" : "offline")">
                                             </i>
+
                                             @(user.Online ? "Online" : "Offline")
                                         </div>
                                     </div>
                                 </li>
                             </ul>
                         }
-
                     </div>
+
                     <div class="chat">
                         <div class="chat-header clearfix">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                        <img src="~/img/profile-circle.svg" alt="avaStar">
-                                    </a>
+                                    <img src="~/img/profile-circle.svg" alt="avaStar">
+
                                     <div class="chat-about">
                                         <h6 class="m-b-0">Mantas</h6>
                                         <small>Offline</small>
@@ -58,34 +52,40 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="chat-history">
-                            <ul class="m-b-0">
-                                <li class="clearfix">
-                                    <div class="message-data text-right">
-                                        <span class="message-data-time">10:10 AM, Today</span>
-                                    </div>
-                                    <div class="message other-message float-right"> Hi, how are you? How is the project coming along? </div>
-                                </li>
-                                <li class="clearfix">
-                                    <div class="message-data">
-                                        <span class="message-data-time">10:12 AM, Today</span>
-                                    </div>
-                                    <div class="message my-message">Are we meeting today?</div>
-                                </li>
-                                <li class="clearfix">
-                                    <div class="message-data">
-                                        <span class="message-data-time">10:15 AM, Today</span>
-                                    </div>
-                                    <div class="message my-message">Project has been already finished and I have results to show you.</div>
-                                </li>
+                            <ul id="messages" class="m-b-0">
+                                @foreach (var message in Model.GetChatMessages())
+                                {
+                                    <li class="clearfix">
+                                        @if (message.SenderId == Model.ChatUser.Id)
+                                        {
+                                            <div class="message-data text-right">
+                                                <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
+                                            </div>
+
+                                            <div class="message other-message float-right">@message.Text</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="message-data">
+                                                <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
+                                            </div>
+
+                                            <div class="message my-message">@message.Text</div>
+                                        }
+                                    </li>
+                                }
                             </ul>
                         </div>
+
                         <div class="chat-message clearfix">
                             <div class="input-group mb-0">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-send"></i></span>
-                                </div>
-                                <input type="text" class="form-control" placeholder="Enter text here...">
+                                <input type="text" id="inputMessage" class="form-control" placeholder="Enter text here...">
+
+                                <button class="btn fa-regular fa-face-smile-beam fa-xl" id="pickEmote"></button>
+
+                                <button id="sendButton" class="btn btn-primary">Send</button>
                             </div>
                         </div>
                     </div>
@@ -94,3 +94,8 @@
         </div>
     </div>
 </div>
+
+<script src="~/lib/signalr/signalr.js"></script>
+<script src="~/js/signalRHandler.js"></script>
+<script src="~/js/chatHandler.js"></script>
+<script src="~/js/emoteHandler.js"></script>

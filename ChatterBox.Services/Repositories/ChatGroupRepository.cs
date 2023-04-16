@@ -18,18 +18,18 @@ namespace ChatterBox.Services.Repositories
             return _dbContext.ChatGroups;
         }
 
-        public void Import(ChatGroup group)
+        public async Task ImportAsync(ChatGroup group)
         {
-            _dbContext.ChatGroups.Add(group);
+            await _dbContext.ChatGroups.AddAsync(group);
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void Import(IEnumerable<ChatGroup> groups)
+        public async Task ImportAsync(IEnumerable<ChatGroup> groups)
         {
-            _dbContext.ChatGroups.AddRange(groups);
+            await _dbContext.ChatGroups.AddRangeAsync(groups);
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

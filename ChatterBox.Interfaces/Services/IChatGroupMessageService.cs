@@ -8,8 +8,8 @@ namespace ChatterBox.Interfaces.Services
 
         IEnumerable<ChatGroupMessage> GetAsNoTracking();
 
-        void Import(ChatGroupMessage message);
+        Task ImportAsync(ChatGroupMessage message);
 
-        void Import(IEnumerable<ChatGroupMessage> messages);
+        Task ImportAsync(IEnumerable<ChatGroupMessage> messages);
     }
 }

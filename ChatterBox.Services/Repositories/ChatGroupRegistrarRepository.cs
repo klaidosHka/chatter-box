@@ -1,6 +1,7 @@
 ﻿using ChatterBox.Context;
 using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Repositories;
+using System.Runtime.CompilerServices;
 
 namespace ChatterBox.Services.Repositories
 {
@@ -18,18 +19,18 @@ namespace ChatterBox.Services.Repositories
             return _dbContext.ChatGroupsRegistrar;
         }
 
-        public void Import(ChatGroupRegistrar registrar)
+        public async Task ImportAsync(ChatGroupRegistrar registrar)
         {
-            _dbContext.ChatGroupsRegistrar.Add(registrar);
+            await _dbContext.ChatGroupsRegistrar.AddAsync(registrar);
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void Import(IEnumerable<ChatGroupRegistrar> registrars)
+        public async Task ImportAsync(IEnumerable<ChatGroupRegistrar> registrars)
         {
-            _dbContext.ChatGroupsRegistrar.AddRange(registrars);
+            await _dbContext.ChatGroupsRegistrar.AddRangeAsync(registrars);
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

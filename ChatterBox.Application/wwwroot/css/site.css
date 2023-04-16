@@ -18,6 +18,29 @@ body {
 }
 
 .chatter-box-background {
-    background-image: url("../img/chatterbox-background.jpg");
+    background-image: url("../img/background.png");
     background-repeat: no-repeat;
+}
+
+.chatter-box-footer {
+    background-color: rgb(51, 52, 51);
+    height: 10px;
+}
+
+.chatter-box-header {
+    background-color: rgb(51, 52, 51);
+    height: 50px;
+}
+
+.align-column-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.align-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

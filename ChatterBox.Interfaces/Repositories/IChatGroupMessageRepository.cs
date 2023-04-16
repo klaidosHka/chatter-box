@@ -6,8 +6,8 @@ namespace ChatterBox.Interfaces.Repositories
     {
         IQueryable<ChatGroupMessage> Get();
 
-        void Import(ChatGroupMessage message);
+        Task ImportAsync(ChatGroupMessage message);
 
-        void Import(IEnumerable<ChatGroupMessage> messages);
+        Task ImportAsync(IEnumerable<ChatGroupMessage> messages);
     }
 }
