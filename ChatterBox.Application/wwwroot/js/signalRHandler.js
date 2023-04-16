@@ -1,5 +1,7 @@
 var connection = new signalR.HubConnectionBuilder()
-    .withUrl('/Main/Index')
+    .withUrl('https://localhost:44340/Main/Index', {
+        transport: signalR.HttpTransportType.WebSockets
+    })
     .withAutomaticReconnect()
     .build();
 

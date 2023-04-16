@@ -19,6 +19,14 @@ namespace ChatterBox.Application
             }
 
             application
+                .UseCors(pb =>
+                {
+                    pb
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("https://localhost:44340");
+                })
+                .UseWebSockets()
                 .UseHttpsRedirection()
                 .UseStaticFiles()
                 .UseRouting()
