@@ -209,3 +209,25 @@
     clear: both;
     height: 0
 }
+
+.emoji-drawer {
+    display: grid;
+    grid-template-columns: repeat(4, 4fr);
+    width: 50px;
+    margin-bottom: 1px;
+    transition: opacity 0.2s;
+}
+
+.hidden {
+    opacity: 0;
+}
+
+.emoji {
+    text-align: center;
+    font-size: 18px;
+    padding: 8px;
+}
+
+.emoji:hover {
+    cursor: pointer;
+}
