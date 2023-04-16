@@ -1,101 +1,106 @@
 ﻿@page
 
-@model ChatterBox.Application.Areas.Main.Pages.IndexModel
+@model ChatterBox.Application.Areas.Main.Pages.IndexModel;
 
 @{
-    Model.ChatUser = await Model.GetCurrentUserAsync();
+    var currentUserId = (await Model.GetCurrentUserAsync()).Id;
 }
 
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 <link href="~/css/main.css" rel="stylesheet" />
 
-<section>
-    <div class="d-flex align-items-center vh-100">
-        <div class="container">
-            <div class="clearfix">
-                <div class="col-lg-12">
-                    <div class="card chat-app">
-                        <div class="people-list">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search...">
-                            </div>
+<div class="align-center">
+    <div class="d-flex w-75 chat-container">
+        <div class="p-0 group">
+            <div class="group-top align-center">
+                <button type="button" class="btn btn-secondary rounded-circle users-btn"><i class="fa-solid fa-list"></i></button>
+            </div>
+        </div>
 
-                            @foreach (var user in Model.GetUsers())
-                            {
-                                <ul class="list-unstyled chat-list mt-2 mb-0">
-                                    <li class="clearfix">
-                                        <img src="~/img/profile-circle.svg" alt="avatar">
+        <div class="p-0 users">
+            <div class="users-top d-flex flex-row justify-content-center">
+                <div class="input-group search">
+                    <input type="text" class="form-control" placeholder="Search...">
+                    <button class="input-group-text"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
 
-                                        <div class="about">
-                                            <div class="name">@user.UserName</div>
+            <div class="users-bottom">
+                @foreach (var user in Model.GetUsers())
+                {
+                    <ul class="list-unstyled chat-list mt-2 mb-0">
+                        <li class="d-flex flex-row">
+                            <img src="~/img/profile-circle.svg" alt="avatar" class="profile-circle-img">
 
-                                            <div class="status">
-                                                <i class="fa-regular fa-circle @(user.Online ? "online" : "offline")">
-                                                </i>
+                            <div class="about">
+                                <div class="name">@user.UserName</div>
 
-                                                @(user.Online ? "Online" : "Offline")
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            }
-                        </div>
+                                <div class="status">
+                                    <i class="fa fa-circle @(user.Online ? "online" : "offline")">
+                                    </i>
 
-                        <div class="chat">
-                            <div class="chat-header clearfix">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <img src="~/img/profile-circle.svg" alt="avaStar">
-
-                                        <div class="chat-about">
-                                            <h6 class="m-b-0">Mantas</h6>
-                                            <small>Offline</small>
-                                        </div>
-                                    </div>
+                                    @(user.Online ? "Online" : "Offline")
                                 </div>
                             </div>
+                        </li>
+                    </ul>
+                }
+            </div>
+        </div>
 
-                            <div class="chat-history">
-                                <ul id="messages" class="m-b-0">
-                                    @foreach (var message in Model.GetChatMessages())
-                                    {
-                                        <li class="clearfix">
-                                            @if (message.SenderId == Model.ChatUser.Id)
-                                            {
-                                                <div class="message-data text-right">
-                                                    <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
-                                                </div>
+        <div class="p-0 chat">
+            <div class="chat-top align-center-end">
+                <div class="d-flex flex-row m-2">
+                    <img src="~/img/profile-circle.svg" alt="avaStar" class="profile-circle-img">
+                    <div class="align-column-center">
+                        <h6 class="m-0">Mantas</h6>
 
-                                                <div class="message other-message float-right">@message.Text</div>
-                                            }
-                                            else
-                                            {
-                                                <div class="message-data">
-                                                    <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
-                                                </div>
-
-                                                <div class="message my-message">@message.Text</div>
-                                            }
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-
-                            <div class="chat-message clearfix">
-                                <div class="input-group mb-0">
-                                    <input type="text" id="inputMessage" class="form-control" placeholder="Enter text here...">
-
-                                    <button class="btn fa-regular fa-face-smile-beam fa-xl" id="pickEmote"></button>
-
-                                    <button id="sendButton" class="btn btn-primary">Send</button>
-                                </div>
-                            </div>
-                        </div>
+                        <small>Offline</small>
                     </div>
                 </div>
             </div>
+
+            <div class="chat-middle align-center">
+                <ul id="messages" class="align-column-center mt-3 user-list">
+                    @foreach (var message in Model.GetChatMessages())
+                    {
+
+                        @if (message.SenderId == currentUserId)
+                        {
+                            <li class="clearfix w-75">
+                                <div>
+                                    <div class="message other-message w-100">@message.Text</div>
+                                    <div class="message-data w-100 align-center-end">
+                                        <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="clearfix w-75">
+                                <div class="message my-message  w-100">@message.Text</div>
+                                <div class="message-data">
+                                    <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+
+            <div class="chat-bottom align-center">
+
+                <div class="input-group mb-0 w-75">
+                    <input type="text" id="inputMessage" class="form-control" placeholder="Enter text here...">
+                    <button id="sendButton" class="btn btn-primary">Send</button>
+                </div>
+
+            </div>
+
         </div>
     </div>
-</section>
+</div>
 
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/signalRHandler.js"></script>

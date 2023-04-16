@@ -21,8 +21,8 @@
 
 @inject SignInManager<ChatUser> _signInManager;
 
-<body class="position-fixed chatter-box-background w-100 h-100">
-    <div class="h-100">
+<body class="position-fixed chatter-box-background w-100">
+    <div>
         <header class="d-flex col-md-12 align-content-center align-content-center chatter-box-header">
             <div class="col-md-6 m-auto">
                 <button class="btn btn-border-0">
@@ -48,7 +48,7 @@
             }
         </header>
 
-        <div class="w-100 mh-100">
+        <div>
             @RenderBody()
         </div>
 
