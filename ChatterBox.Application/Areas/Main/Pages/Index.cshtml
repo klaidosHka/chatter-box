@@ -2,6 +2,7 @@
 
 @model ChatterBox.Application.Areas.Main.Pages.IndexModel
 
+
 @{
     var currentUser = await Model.GetCurrentUserAsync();
     var users = Model.GetUsers();
@@ -77,8 +78,44 @@
                             <div class="input-group mb-0">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa fa-send"></i></span>
+                                    </div>                             
+                                    
+                                    <script>
+                                        function addEmoji(emoji) {
+                                            let inputEle = document.getElementById('input');
+
+                                            input.value += emoji;
+                                        }
+
+                                        function toggleEmojiDrawer() {
+                                            let drawer = document.getElementById('drawer');
+
+                                            if (drawer.classList.contains('hidden')) {
+                                                drawer.classList.remove('hidden');
+                                            } else {
+                                                drawer.classList.add('hidden');
+                                            }
+                                        }
+                                    </script>
+
+                                <input type="text" class="form-control" placeholder="Enter text here..." id="input">
+
+                                    <div>
+                                    <button onclick="toggleEmojiDrawer()">😀</button>
+
+                                    <div id="drawer" class="emoji-drawer hidden">
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😀</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😃</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😄</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😁</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😆</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">🥰</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😍</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😘</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">🤤</div>
+                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">🙈</div>
+                                    </div>
                                 </div>
-                                <input type="text" class="form-control" placeholder="Enter text here...">                                    
                             </div>
                         </div>
                     </div>
