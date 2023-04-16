@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using ChatterBox.Interfaces.Entities;
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -17,18 +19,40 @@
     <script src="https://kit.fontawesome.com/633356e7af.js" crossorigin="anonymous"></script>
 </head>
 
+@inject SignInManager<ChatUser> _signInManager;
+
 <body class="position-fixed chatter-box-background w-100 h-100">
     <div class="h-100">
-        <header class="chatter-box-header">
+        <header class="d-flex col-md-12 align-content-center align-content-center chatter-box-header">
+            <div class="col-md-6 float-left m-auto">
+                <button class="btn btn-border-0">
+                    <a href="~/Main" class="fa-solid fa-comment fa-xl text-decoration-none">
+                        <span class="text-white fw-normal text-capitalize">
+                            Chat
+                        </span>
+                    </a>
+                </button>
+            </div>
 
+            @if (_signInManager?.Context?.User?.Identity?.IsAuthenticated ?? false)
+            {
+                <div class="col-md-6 float-right m-auto">
+                    <a href="~/Identity/Account/Manage" class="text-decoration-none">
+                        @*<img src="~/img/profile-circle.svg" alt="avatar" />*@
+
+                        <span class="text-white fw-normal text-capitalize">
+                            @_signInManager.Context.User.Identity.Name
+                        </span>
+                    </a>
+                </div>
+            }
         </header>
-    
+
         <div class="w-100 mh-100">
             @RenderBody()
         </div>
 
         <footer class="fixed-bottom chatter-box-footer">
-
         </footer>
     </div>
 

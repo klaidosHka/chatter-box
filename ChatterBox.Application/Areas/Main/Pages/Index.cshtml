@@ -8,84 +8,86 @@
 
 <link href="~/css/main.css" rel="stylesheet" />
 
-<div class="d-flex align-items-center vh-100">
-    <div class="container">
-        <div class="row clearfix">
-            <div class="col-lg-12">
-                <div class="card chat-app">
-                    <div id="plist" class="people-list">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search...">
+<section>
+    <div class="d-flex align-items-center vh-100">
+        <div class="container">
+            <div class="clearfix">
+                <div class="col-lg-12">
+                    <div class="card chat-app">
+                        <div class="people-list">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search...">
+                            </div>
+
+                            @foreach (var user in Model.GetUsers())
+                            {
+                                <ul class="list-unstyled chat-list mt-2 mb-0">
+                                    <li class="clearfix">
+                                        <img src="~/img/profile-circle.svg" alt="avatar">
+
+                                        <div class="about">
+                                            <div class="name">@user.UserName</div>
+
+                                            <div class="status">
+                                                <i class="fa-regular fa-circle @(user.Online ? "online" : "offline")">
+                                                </i>
+
+                                                @(user.Online ? "Online" : "Offline")
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            }
                         </div>
 
-                        @foreach (var user in Model.GetUsers())
-                        {
-                            <ul class="list-unstyled chat-list mt-2 mb-0">
-                                <li class="clearfix">
-                                    <img src="~/img/profile-circle.svg" alt="avatar">
+                        <div class="chat">
+                            <div class="chat-header clearfix">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <img src="~/img/profile-circle.svg" alt="avaStar">
 
-                                    <div class="about">
-                                        <div class="name">@user.UserName</div>
-
-                                        <div class="status">
-                                            <i class="fa-regular fa-circle @(user.Online ? "online" : "offline")">
-                                            </i>
-
-                                            @(user.Online ? "Online" : "Offline")
+                                        <div class="chat-about">
+                                            <h6 class="m-b-0">Mantas</h6>
+                                            <small>Offline</small>
                                         </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        }
-                    </div>
-
-                    <div class="chat">
-                        <div class="chat-header clearfix">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <img src="~/img/profile-circle.svg" alt="avaStar">
-
-                                    <div class="chat-about">
-                                        <h6 class="m-b-0">Mantas</h6>
-                                        <small>Offline</small>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="chat-history">
-                            <ul id="messages" class="m-b-0">
-                                @foreach (var message in Model.GetChatMessages())
-                                {
-                                    <li class="clearfix">
-                                        @if (message.SenderId == Model.ChatUser.Id)
-                                        {
-                                            <div class="message-data text-right">
-                                                <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
-                                            </div>
+                            <div class="chat-history">
+                                <ul id="messages" class="m-b-0">
+                                    @foreach (var message in Model.GetChatMessages())
+                                    {
+                                        <li class="clearfix">
+                                            @if (message.SenderId == Model.ChatUser.Id)
+                                            {
+                                                <div class="message-data text-right">
+                                                    <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
+                                                </div>
 
-                                            <div class="message other-message float-right">@message.Text</div>
-                                        }
-                                        else
-                                        {
-                                            <div class="message-data">
-                                                <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
-                                            </div>
+                                                <div class="message other-message float-right">@message.Text</div>
+                                            }
+                                            else
+                                            {
+                                                <div class="message-data">
+                                                    <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
+                                                </div>
 
-                                            <div class="message my-message">@message.Text</div>
-                                        }
-                                    </li>
-                                }
-                            </ul>
-                        </div>
+                                                <div class="message my-message">@message.Text</div>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
 
-                        <div class="chat-message clearfix">
-                            <div class="input-group mb-0">
-                                <input type="text" id="inputMessage" class="form-control" placeholder="Enter text here...">
+                            <div class="chat-message clearfix">
+                                <div class="input-group mb-0">
+                                    <input type="text" id="inputMessage" class="form-control" placeholder="Enter text here...">
 
-                                <button class="btn fa-regular fa-face-smile-beam fa-xl" id="pickEmote"></button>
+                                    <button class="btn fa-regular fa-face-smile-beam fa-xl" id="pickEmote"></button>
 
-                                <button id="sendButton" class="btn btn-primary">Send</button>
+                                    <button id="sendButton" class="btn btn-primary">Send</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -93,7 +95,7 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/signalRHandler.js"></script>
