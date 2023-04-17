@@ -29,6 +29,7 @@ namespace ChatterBox.Application.Areas.Main.Pages
             _userManager = userManager;
         }
 
+
         public async Task<IActionResult> CreateGroupMessageAsync(ChatGroupMessage message)
         {
             if (ModelState.IsValid)
@@ -98,4 +99,6 @@ namespace ChatterBox.Application.Areas.Main.Pages
 
         public string UserName { get; set; } = string.Empty;
     }
+
+
 }

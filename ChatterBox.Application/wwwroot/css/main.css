@@ -221,3 +221,10 @@
 .name {
     font-size: 15px;
 }
+.user-item:hover .profile-circle-img {
+    transform: scale(1.2);
+}
+.user-item:hover .about {
+    background-color: #f2f2f2;
+}
+

@@ -5,10 +5,13 @@
 @{
     var currentUser = (await Model.GetCurrentUserAsync());
     var targetUser = (await Model.GetCurrentUserAsync());
+    var selectedUser = (await Model.GetCurrentUserAsync());
 }
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 <link href="~/css/main.css" rel="stylesheet" />
+
+
 
 <div class="align-center">
     <div class="d-flex w-75 chat-container">
@@ -16,12 +19,13 @@
             <div class="group-top align-center">
                 <button type="button" class="btn btn-secondary rounded-circle users-btn"><i class="fa-solid fa-list"></i></button>
             </div>
+
         </div>
 
-        <div class="p-0 users">
+        <div class="p-0 users" id="userList">
             <div class="users-top d-flex flex-row justify-content-center">
                 <div class="input-group search">
-                    <input type="text" class="form-control" placeholder="Search...">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search..." oninput="searchUsers(this.value)">
                     <button class="input-group-text"><i class="fa fa-search"></i></button>
                 </div>
             </div>
@@ -30,19 +34,19 @@
                 @foreach (var user in Model.GetUsers())
                 {
                     <ul class="list-unstyled chat-list mt-2 mb-0">
-                        <li class="d-flex flex-row">
-                            <img src="~/img/profile-circle.svg" alt="avatar" class="profile-circle-img">
+                        <li class="d-flex flex-row user-item">
+                        <img src="~/img/profile-circle.svg" alt="avatar" class="profile-circle-img">
 
-                            <div class="about">
-                                <div class="name">@user.UserName</div>
+                        <div class="about">
+                            <div class="name">@user.UserName</div>
 
-                                <div class="status">
-                                    <i class="fa fa-circle @(user.Online ? "online" : "offline")">
-                                    </i>
+                    <div class="status">
+                        <i class="fa fa-circle @(user.Online ? "online" : "offline")">
+                    </i>
 
-                                    @(user.Online ? "Online" : "Offline")
-                                </div>
-                            </div>
+                    @(user.Online ? "Online" : "Offline")
+                        </div>
+                        </div>
                         </li>
                     </ul>
                 }
@@ -109,3 +113,11 @@
 <script src="~/js/signalRHandler.js"></script>
 <script src="~/js/chatHandler.js"></script>
 <script src="~/js/emoteHandler.js"></script>
+<script src="~/js/userSearch.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.users-btn').click(function () {
+            $('#userList').slideToggle();
+        });
+    });
+</script>
