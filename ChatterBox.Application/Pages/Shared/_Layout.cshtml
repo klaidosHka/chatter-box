@@ -23,7 +23,7 @@
 
 <body class="position-fixed chatter-box-background w-100">
     <div>
-        <header class="d-flex col-md-12 align-content-center align-content-center chatter-box-header">
+        <header class="d-flex col-md-12 align-content-start chatter-box-header">
             <div class="col-md-6 m-auto">
                 <button class="btn btn-border-0">
                     <a href="~/Main" class="fa-solid fa-comment fa-xl text-decoration-none">
@@ -34,9 +34,9 @@
                 </button>
             </div>
 
-            @if (_signInManager?.Context?.User?.Identity?.IsAuthenticated ?? false)
-            {
-                <div class="d-flex col-md-6 m-auto flex-row-reverse">
+            <div class="d-flex col-md-6 m-auto flex-row-reverse">
+                @if (_signInManager?.Context?.User?.Identity?.IsAuthenticated ?? false)
+                {
                     <a href="~/Identity/Account/Manage" class="text-decoration-none">
                         <span class="text-white fw-normal">
                             @_signInManager.Context.User.Identity.Name
@@ -44,8 +44,8 @@
 
                         <img src="~/img/profile-circle.svg" alt="avatar" />
                     </a>
-                </div>
-            }
+                }
+            </div>
         </header>
 
         <div>

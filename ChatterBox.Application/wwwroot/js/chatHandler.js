@@ -13,10 +13,37 @@ function handleButtonSendClick() {
 
         return;
     }
+    handleDirectMessageAdd(message);
+
+    handleGroupMessageAdd(message);
 
     handleDirectMessageSend(message);
 
     handleGroupMessageSend(message);
 
     input.val(null);
+}
+
+function handleDirectMessageAdd(message) {
+    $("<li>")
+        .addClass("clearfix w-75")
+        .append(
+            $("<div>")
+                .addClass("message my-message")
+                .text(message)
+        )
+        .append(
+            $("<div>")
+                .addClass("message-data")
+                .append(
+                    $("<span>")
+                        .addClass("message-data-time")
+                        .text(new Date().toTimeString())
+                )
+        )
+        .appendTo($("#messages"));
+}
+
+function handleGroupMessageAdd(message) {
+
 }

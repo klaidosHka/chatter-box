@@ -3,7 +3,8 @@
 @model ChatterBox.Application.Areas.Main.Pages.IndexModel;
 
 @{
-    var currentUserId = (await Model.GetCurrentUserAsync()).Id;
+    var currentUser = (await Model.GetCurrentUserAsync());
+    var targetUser = (await Model.GetCurrentUserAsync());
 }
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -53,9 +54,9 @@
                 <div class="d-flex flex-row m-2">
                     <img src="~/img/profile-circle.svg" alt="avaStar" class="profile-circle-img">
                     <div class="align-column-center">
-                        <h6 class="m-0">Mantas</h6>
+                        <h6 class="m-0">@targetUser.UserName</h6>
 
-                        <small>Offline</small>
+                        <small>@((await Model.IsOnline(targetUser)) ? "Online" : "Offline")</small>
                     </div>
                 </div>
             </div>
@@ -65,11 +66,12 @@
                     @foreach (var message in Model.GetChatMessages())
                     {
 
-                        @if (message.SenderId == currentUserId)
+                        @if (message.SenderId == currentUser.Id)
                         {
                             <li class="clearfix w-75">
                                 <div>
                                     <div class="message other-message w-100">@message.Text</div>
+
                                     <div class="message-data w-100 align-center-end">
                                         <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
                                     </div>
@@ -80,6 +82,7 @@
                         {
                             <li class="clearfix w-75">
                                 <div class="message my-message  w-100">@message.Text</div>
+
                                 <div class="message-data">
                                     <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
                                 </div>
@@ -90,14 +93,14 @@
             </div>
 
             <div class="chat-bottom align-center">
-
                 <div class="input-group mb-0 w-75">
                     <input type="text" id="inputMessage" class="form-control" placeholder="Enter text here...">
+
+                    <button id="pickEmote" class="btn fa-solid fa-smile-beam"></button>
+
                     <button id="sendButton" class="btn btn-primary">Send</button>
                 </div>
-
             </div>
-
         </div>
     </div>
 </div>

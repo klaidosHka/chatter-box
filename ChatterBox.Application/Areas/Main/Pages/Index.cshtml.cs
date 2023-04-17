@@ -85,6 +85,11 @@ namespace ChatterBox.Application.Areas.Main.Pages
                 })
                 .AsQueryable();
         }
+
+        public async Task<bool> IsOnline(ChatUser user)
+        {
+            return _signInManager.IsSignedIn(await _signInManager.CreateUserPrincipalAsync(user));
+        }
     }
 
     public class UserViewModel
