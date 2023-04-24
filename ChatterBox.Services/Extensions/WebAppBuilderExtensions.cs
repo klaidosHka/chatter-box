@@ -32,7 +32,7 @@ namespace ChatterBox.Services.Extensions
                 .AddRazorPages()
                 .AddRazorPagesOptions(o =>
                 {
-                    o.Conventions.AuthorizeAreaPage("Main", "/Index");
+                    //o.Conventions.AuthorizeAreaPage("Main", "/Index");
                 });
 
             builder.Services
@@ -91,6 +91,20 @@ namespace ChatterBox.Services.Extensions
                     o.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
                     o.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
                 });
+
+
+            builder.Services.AddCors(o =>
+            {
+                o.AddPolicy(
+                    "ChatterBoxCors",
+                    p => p
+                        .WithOrigins("https://localhost:44340")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .SetIsOriginAllowed((host) => true)
+                        .AllowCredentials()
+                );
+            });
 
             return builder.Build();
         }

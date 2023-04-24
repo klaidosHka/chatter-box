@@ -19,7 +19,7 @@ body {
 
 .chatter-box-background {
     background-image: url("../img/background.png");
-    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .chatter-box-footer {
@@ -32,19 +32,25 @@ body {
     height: 50px;
 }
 
-.chatter-box-header img {
-    width: 40px;
+    .chatter-box-header img {
+        width: 40px;
+    }
+
+.align-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.align-center-end {
+    display: flex;
+    align-items: center;
+    justify-content: end;
 }
 
 .align-column-center {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.align-center {
-    display: flex;
     align-items: center;
     justify-content: center;
 }

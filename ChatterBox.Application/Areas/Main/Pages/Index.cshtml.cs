@@ -9,6 +9,7 @@ namespace ChatterBox.Application.Areas.Main.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly IChatGroupService _chatGroupService;
         private readonly IChatGroupMessageService _chatGroupMessageService;
         private readonly IChatMessageService _chatMessageService;
         private readonly SignInManager<ChatUser> _signInManager;
@@ -17,12 +18,14 @@ namespace ChatterBox.Application.Areas.Main.Pages
         public ChatUser? ChatUser { get; set; }
 
         public IndexModel(
+            IChatGroupService chatGroupService,
             IChatGroupMessageService chatGroupMessageService,
             IChatMessageService chatMessageService,
             SignInManager<ChatUser> signInManager,
             UserManager<ChatUser> userManager
         )
         {
+            _chatGroupService = chatGroupService;
             _chatGroupMessageService = chatGroupMessageService;
             _chatMessageService = chatMessageService;
             _signInManager = signInManager;
@@ -70,7 +73,15 @@ namespace ChatterBox.Application.Areas.Main.Pages
 
         public async Task<ChatUser> GetCurrentUserAsync()
         {
-            return await _userManager.GetUserAsync(User);
+            return await _userManager.Users.FirstAsync(u => u.UserName.EndsWith("klaidosHka"));
+            //return await _userManager.GetUserAsync(User);
+        }
+
+        public IQueryable<ChatGroup> GetGroups()
+        {
+            return _chatGroupService
+                .GetGroupsAsNoTracking()
+                .AsQueryable();
         }
 
         public IQueryable<UserViewModel> GetUsers()
