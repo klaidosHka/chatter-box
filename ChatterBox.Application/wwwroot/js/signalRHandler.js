@@ -5,8 +5,8 @@ var connection = new signalR.HubConnectionBuilder()
     .withAutomaticReconnect()
     .build();
 
-connection.on('ReceiveDirectMessage', (message) => handleDirectMessageReceive());
-connection.on('ReceiveGroupMessage', (message) => handleGroupMessageReceive());
+connection.on('ReceiveDirectMessage', (message) => handleDirectMessageReceive(message));
+connection.on('ReceiveGroupMessage', (message) => handleGroupMessageReceive(message));
 
 connection
     .start()
@@ -22,7 +22,7 @@ function handleDirectMessageSend(message) {
     connection
         .invoke('SendDirectMessage', message)
         .catch(function (e) {
-            // console.error(e.toString());
+             console.error(e.toString());
         });
 }
 
@@ -34,6 +34,6 @@ function handleGroupMessageSend(message) {
     connection
         .invoke('SendGroupMessage', message)
         .catch(function (e) {
-            // console.error(e.toString());
+             console.error(e.toString());
         });
 }
