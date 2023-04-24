@@ -73,8 +73,7 @@ namespace ChatterBox.Application.Areas.Main.Pages
 
         public async Task<ChatUser> GetCurrentUserAsync()
         {
-            return await _userManager.Users.FirstAsync(u => u.UserName.EndsWith("klaidosHka"));
-            //return await _userManager.GetUserAsync(User);
+            return await _userManager.GetUserAsync(User);
         }
 
         public IQueryable<ChatGroup> GetGroups()

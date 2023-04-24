@@ -32,7 +32,7 @@ namespace ChatterBox.Services.Extensions
                 .AddRazorPages()
                 .AddRazorPagesOptions(o =>
                 {
-                    //o.Conventions.AuthorizeAreaPage("Main", "/Index");
+                    o.Conventions.AuthorizeAreaPage("Main", "/Index");
                 });
 
             builder.Services
