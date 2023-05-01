@@ -1,13 +1,18 @@
-﻿function searchUsers(searchValue) {
-    var users = document.querySelectorAll('.chat-list');
-    var searchRegex = new RegExp(searchValue, 'i');
+﻿
+const searchInput = document.getElementById('user-search-input');
+const userList = document.querySelector('.chat-list');
+    const userButtons = Array.from(userList.querySelectorAll('.user'));
 
-    users.forEach(function (user) {
-        var name = user.querySelector('.name').innerText;
-        if (searchRegex.test(name)) {
-            user.style.display = 'block';
-        } else {
-            user.style.display = 'none';
+searchInput.addEventListener('input', () => {
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+        userButtons.forEach(button => {
+            const username = button.dataset.username.toLowerCase();
+
+    if (username.includes(searchTerm)) {
+        button.classList.remove('d-none');
+    } else {
+        button.classList.add('d-none');
         }
     });
-}
+});
