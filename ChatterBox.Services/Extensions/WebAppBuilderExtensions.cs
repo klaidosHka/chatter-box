@@ -92,6 +92,20 @@ namespace ChatterBox.Services.Extensions
                     o.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
                 });
 
+
+            builder.Services.AddCors(o =>
+            {
+                o.AddPolicy(
+                    "ChatterBoxCors",
+                    p => p
+                        .WithOrigins("https://localhost:44340")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .SetIsOriginAllowed((host) => true)
+                        .AllowCredentials()
+                );
+            });
+
             return builder.Build();
         }
     }

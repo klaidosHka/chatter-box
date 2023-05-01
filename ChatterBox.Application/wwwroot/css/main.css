@@ -94,10 +94,10 @@
     border-width: 1px;
     border-radius: 10px;
     border-color: #ffffff;
-    margin-top: 50px;
+    width:80%;
 }
 
-.group {
+.groups {
     border-right-style: solid;
     border-right-width: 1px;
     border-right-color: #ffffff;
@@ -112,14 +112,26 @@
     border-bottom-color: #ffffff;
 }
 
-.group-bottom {
+.group-middle {
+    height: 620px;
     overflow-y: scroll;
-    overflow-x: hidden;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #ffffff;
+}
+
+.group {
+    margin-top: 13px;
+    margin-left: 5px;
+}
+
+.group-bottom {
+    height: 75px;
 }
 
 .users {
     min-height: 750px;
-    min-width: 300px;
+    min-width: 160px;
     padding-right: 0px;
     border-right-style: solid;
     border-right-width: 1px;
@@ -131,6 +143,18 @@
     width: 50px;
 }
 
+.user {
+    height: 55px;
+    margin-top: 6px;
+    background: rgba(0,0,0,0);
+    border-style: none;
+}
+
+    .user:hover {
+        background-color: #cbe3b3;
+        border-radius: 5px;
+    }
+
 .users-top {
     height: 75px;
     border-bottom-style: solid;
@@ -138,8 +162,21 @@
     border-bottom-color: #ffffff;
 }
 
-.users-bottom {
+.settings-btn {
+    height: 35px;
+    width: 35px;
+}
+
+.users-middle {
     overflow-y: scroll;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #ffffff;
+    height: 620px;
+}
+
+.users-bottom {
+    height: 75px;
 }
 
 .search {
@@ -158,8 +195,9 @@
 }
 
 .chat-middle {
-    height: 600px;
+    height: 620px;
     overflow-y: scroll;
+    padding-top: 220px;
 }
 
 .chat-bottom {
@@ -173,6 +211,7 @@
 
 .list-unstyled {
     margin-left: 10px;
+    margin-right: 10px;
 }
 
 ::-webkit-scrollbar {
@@ -190,41 +229,3 @@
     ::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
-
-::-webkit-scrollbar:horizontal {
-    height: 0px;
-}
-
-::-webkit-scrollbar-thumb:horizontal {
-    border-radius: 0px;
-}
-
-.align-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.align-center-end {
-    display: flex;
-    align-items: center;
-    justify-content: end;
-}
-
-.align-column-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.name {
-    font-size: 15px;
-}
-.user-item:hover .profile-circle-img {
-    transform: scale(1.2);
-}
-.user-item:hover .about {
-    background-color: #f2f2f2;
-}
-

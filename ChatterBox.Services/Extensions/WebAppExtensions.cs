@@ -19,14 +19,7 @@ namespace ChatterBox.Application
             }
 
             application
-                .UseCors(pb =>
-                {
-                    pb
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .WithOrigins("https://localhost:44340");
-                })
-                .UseWebSockets()
+                .UseCors("ChatterBoxCors")
                 .UseHttpsRedirection()
                 .UseStaticFiles()
                 .UseRouting()
@@ -37,7 +30,7 @@ namespace ChatterBox.Application
 
             application.UseEndpoints(ep =>
             {
-                ep.MapHub<ChatHub>("/Main/Index");
+                ep.MapHub<ChatHub>("/SignalR/Hub");
             });
 
             return application;
