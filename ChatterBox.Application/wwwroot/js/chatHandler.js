@@ -86,3 +86,4 @@ function handleGroupMessageSend(message) {
             console.error(e.toString());
         });
 }
+
