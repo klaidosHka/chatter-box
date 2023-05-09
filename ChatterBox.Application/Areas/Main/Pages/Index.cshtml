@@ -100,25 +100,24 @@
 
                                 <input type="text" class="form-control" placeholder="Enter text here..." id="input">
 
-                                    <div>
-                                    <button onclick="toggleEmojiDrawer()">😀</button>
-
-                                    <div id="drawer" class="emoji-drawer hidden">
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😀</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😃</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😄</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😁</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😆</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">🥰</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😍</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">😘</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">🤤</div>
-                                        <div class="emoji" onclick="addEmoji(this.innerHTML)">🙈</div>
-                                    </div>
-                                </div>
-                                <form>
-                                <input type="file" name="photo" accept="image/png, image/jpeg">
+                                <form onsubmit="return validateForm()">
+                                    <input type="file" name="photo" accept="image/png, image/jpeg, mage/svg">
+                                    <button type="submit">Upload</button>
                                 </form>
+
+                                <script>
+                                    function validateForm() {
+                                        var allowedTypes = ['image/png', 'image/jpeg', 'image/svg'];
+                                        var fileInput = document.querySelector('input[name="photo"]');
+                                        var file = fileInput.files[0];
+
+                                        if (!file || allowedTypes.indexOf(file.type) === -1) {
+                                            alert('Please select a valid photo file (.jpg, .png, .svg.)');
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+                                </script>
                             </div>
                         </div>
                     </div>
