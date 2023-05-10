@@ -7509,8 +7509,6 @@
     }
 
 
-
-
     const functions = {
 
         styles: () => {
@@ -7876,7 +7874,7 @@
             this.lib('.fg-emoji-nav li').removeClass('emoji-picker-nav-active');
             link.closest('li').classList.add('emoji-picker-nav-active');
 
-            destination.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
+            destination.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
         },
 
 
@@ -7920,7 +7918,6 @@
     };
 
 
-
     const bindEvents = () => {
 
         this.lib(document.body).on('click', functions.closePicker, '#fg-emoji-picker-close-button');
@@ -7933,7 +7930,6 @@
         this.lib(document).on('mouseup', functions.mouseUp, '#fg-emoji-picker-move');
         this.lib(document).on('mousemove', functions.mouseMove);
     };
-
 
 
     (() => {

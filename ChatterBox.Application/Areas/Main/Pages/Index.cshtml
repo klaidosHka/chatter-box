@@ -1,19 +1,23 @@
 ﻿@page
 
+@using ChatterBox.Interfaces.Entities
+@using ChatterBox.Services.Extensions
 @model ChatterBox.Application.Areas.Main.Pages.IndexModel;
 
 @{
-    var currentUser = (await Model.GetCurrentUserAsync());
+    var currentUser = await Model.GetCurrentUserAsync();
     var targetUser = currentUser; // (await Model.GetCurrentUserAsync());
 }
 
-<link href="~/css/main.css" rel="stylesheet" />
+<link href="~/css/main.css" rel="stylesheet"/>
 
 <div class="d-flex justify-content-center w-100 mt-4">
     <div class="d-flex chat-container">
         <div class="p-0 groups">
             <div class="group-top align-center">
-                <button type="button" class="btn btn-secondary rounded-circle users-btn" id="toggle-users"><i class="fa-solid fa-list"></i></button>
+                <button type="button" class="btn btn-secondary rounded-circle users-btn" id="toggle-users">
+                    <i class="fa-solid fa-list"></i>
+                </button>
             </div>
 
             <div class="group-middle">
@@ -29,7 +33,9 @@
             </div>
 
             <div class="group-bottom align-center">
-                <button type="button" class="btn btn-secondary rounded-circle users-btn"><i class="fa-solid fa-user-group"></i></button>
+                <button type="button" class="btn btn-secondary rounded-circle users-btn">
+                    <i class="fa-solid fa-user-group"></i>
+                </button>
             </div>
         </div>
 
@@ -37,23 +43,22 @@
             <div class="users-top d-flex flex-row justify-content-center">
                 <div class="input-group search">
                     <input type="text" class="form-control" placeholder="Search..." id="user-search-input">
-
                 </div>
             </div>
 
             <div class="users-middle">
-                <ul class="list-unstyled chat-list mt-2 mb-0">
+                <ul class="list-not-styled chat-list mt-2 mb-0">
                     @foreach (var user in Model.GetUsers())
                     {
                         <li class="d-flex flex-row">
                             <button class="w-100 d-flex user" data-username="@user.UserName">
-                            <img src="~/img/profile-circle.svg" alt="avatar" class="profile-circle-img">
+                                <img src="~/img/profile-circle.svg" alt="avatar" class="profile-circle-img">
 
                                 <div class="d-flex flex-column justify-content-center">
                                     <div class="justify-content-start">
                                         <i class="fa fa-circle @(user.Online ? "online" : "offline")"></i>
 
-                                            @user.UserName
+                                        @user.UserName
                                     </div>
                                 </div>
                             </button>
@@ -68,18 +73,18 @@
 
                     <div class="d-flex flex-column justify-content-center">
                         <div class="justify-content-start">
-                            <i class="fa fa-circle @((await Model.IsOnline(currentUser)) ? "online" : "offline")"></i>
+                            <i class="fa fa-circle @(Model.IsOnline(currentUser) ? "online" : "offline")"></i>
 
                             @currentUser.UserName
                         </div>
                     </div>
                 </div>
 
-                    <a href="/settings">
-                        <button type="button" class="btn btn-secondary rounded-circle settings-btn align-center">
-                            <i class="fa-solid fa-gear"></i>
-                        </button>
-                    </a>
+                <a href="/Identity/Account/Manage">
+                    <button type="button" class="btn btn-secondary rounded-circle settings-btn align-center">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </a>
             </div>
         </div>
 
@@ -90,7 +95,7 @@
 
                     <div class="d-flex flex-column justify-content-center">
                         <div class="justify-content-start">
-                            <i class="fa fa-circle @((await Model.IsOnline(targetUser)) ? "online" : "offline")"></i>
+                            <i class="fa fa-circle @(Model.IsOnline(targetUser) ? "online" : "offline")"></i>
 
                             @targetUser.UserName
                         </div>

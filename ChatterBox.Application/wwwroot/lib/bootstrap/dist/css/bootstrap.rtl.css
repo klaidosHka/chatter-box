@@ -546,7 +546,7 @@ progress {
   }
 }
 
-.list-unstyled {
+.list-not-styled {
   padding-right: 0;
   list-style: none;
 }

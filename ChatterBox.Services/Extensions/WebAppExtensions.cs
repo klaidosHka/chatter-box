@@ -1,5 +1,8 @@
 ﻿using ChatterBox.Context;
+using ChatterBox.Interfaces.Entities;
+using ChatterBox.Services.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 
 namespace ChatterBox.Application

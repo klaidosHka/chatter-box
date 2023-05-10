@@ -1,5 +1,6 @@
 ﻿using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Services;
+using ChatterBox.Services.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,8 +15,6 @@ namespace ChatterBox.Application.Areas.Main.Pages
         private readonly IChatMessageService _chatMessageService;
         private readonly SignInManager<ChatUser> _signInManager;
         private readonly UserManager<ChatUser> _userManager;
-
-        public ChatUser? ChatUser { get; set; }
 
         public IndexModel(
             IChatGroupService chatGroupService,
@@ -32,38 +31,36 @@ namespace ChatterBox.Application.Areas.Main.Pages
             _userManager = userManager;
         }
 
-
-
         public async Task<IActionResult> CreateGroupMessageAsync(ChatGroupMessage message)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await GetCurrentUserAsync();
-
-                message.SenderId = user.Id;
-
-                await _chatGroupMessageService.ImportAsync(message);
-
-                return Page();
+                return BadRequest();
             }
 
-            return BadRequest();
+            var user = await GetCurrentUserAsync();
+
+            message.SenderId = user.Id;
+
+            await _chatGroupMessageService.ImportAsync(message);
+
+            return Page();
         }
 
         public async Task<IActionResult> CreateMessageAsync(ChatMessage message)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await GetCurrentUserAsync();
-
-                message.SenderId = user.Id;
-
-                await _chatMessageService.ImportAsync(message);
-
-                return Page();
+                return BadRequest();
             }
 
-            return BadRequest();
+            var user = await GetCurrentUserAsync();
+
+            message.SenderId = user.Id;
+
+            await _chatMessageService.ImportAsync(message);
+
+            return Page();
         }
 
         public IQueryable<ChatMessage> GetChatMessages()
@@ -98,9 +95,9 @@ namespace ChatterBox.Application.Areas.Main.Pages
                 .AsQueryable();
         }
 
-        public async Task<bool> IsOnline(ChatUser user)
+        public bool IsOnline(ChatUser user)
         {
-            return _signInManager.IsSignedIn(await _signInManager.CreateUserPrincipalAsync(user));
+            return user.IsOnlineAsync(_signInManager).Result;
         }
     }
 
@@ -110,6 +107,4 @@ namespace ChatterBox.Application.Areas.Main.Pages
 
         public string UserName { get; set; } = string.Empty;
     }
-
-
 }
