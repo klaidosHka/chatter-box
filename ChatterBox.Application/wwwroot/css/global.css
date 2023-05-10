@@ -32,9 +32,9 @@ body {
     height: 50px;
 }
 
-    .chatter-box-header img {
-        width: 40px;
-    }
+.chatter-box-header img {
+    width: 40px;
+}
 
 .align-center {
     display: flex;

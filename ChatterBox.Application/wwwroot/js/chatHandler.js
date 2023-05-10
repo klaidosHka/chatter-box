@@ -19,7 +19,7 @@ connection
 
 $("#sendButton").click(function (e) {
     e.preventDefault();
-
+    
     handleButtonClickSend();
 });
 

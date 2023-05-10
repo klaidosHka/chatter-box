@@ -1,6 +1,6 @@
 ﻿.user-list {
     list-style-type: none;
-    padding: 0px;
+    padding: 0;
 }
 
 .message-data {
@@ -23,47 +23,45 @@
     min-width: 50px;
 }
 
-    .message:after {
-        bottom: 100%;
-        left: 7%;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-        border-bottom-color: #fff;
-        border-width: 10px;
-        margin-left: -10px;
-    }
+.message:after {
+    bottom: 100%;
+    left: 7%;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border: 10px solid transparent;
+    border-bottom-color: #fff;
+    margin-left: -10px;
+}
 
 .my-message {
     background: #efefef
 }
 
-    .my-message:after {
-        bottom: 100%;
-        left: 30px;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-        border-bottom-color: #efefef;
-        border-width: 10px;
-        margin-left: -10px;
-    }
+.my-message:after {
+    bottom: 100%;
+    left: 30px;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border: 10px solid transparent;
+    border-bottom-color: #efefef;
+    margin-left: -10px;
+}
 
 .other-message {
     background: #e8f1f3;
     text-align: right;
 }
 
-    .other-message:after {
-        border-bottom-color: #e8f1f3;
-        left: 93%;
-    }
+.other-message:after {
+    border-bottom-color: #e8f1f3;
+    left: 93%;
+}
 
 .chat-message {
     padding: 20px;
@@ -94,7 +92,7 @@
     border-width: 1px;
     border-radius: 10px;
     border-color: #ffffff;
-    width:80%;
+    width: 80%;
 }
 
 .groups {
@@ -146,14 +144,14 @@
 .user {
     height: 55px;
     margin-top: 6px;
-    background: rgba(0,0,0,0);
+    background: rgba(0, 0, 0, 0);
     border-style: none;
 }
 
-    .user:hover {
-        background-color: #cbe3b3;
-        border-radius: 5px;
-    }
+.user:hover {
+    background-color: #cbe3b3;
+    border-radius: 5px;
+}
 
 .users-top {
     height: 75px;
@@ -209,7 +207,7 @@
     width: 50px;
 }
 
-.list-unstyled {
+.list-not-styled {
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -226,9 +224,10 @@
     background: #d9e5cd;
 }
 
-    ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 .users.closed {
     width: 0;
     overflow: hidden;
