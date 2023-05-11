@@ -1,4 +1,5 @@
-﻿using ChatterBox.Context;
+﻿using System.Globalization;
+using ChatterBox.Context;
 using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Repositories;
 using ChatterBox.Interfaces.Services;
@@ -18,10 +19,8 @@ namespace ChatterBox.Services.Extensions
         public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
         {
             // Database & Auth
-            builder.Services.AddDbContext<CbDbContext>(o =>
-            {
-                o.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseAzure"));
-            },
+            builder.Services.AddDbContext<CbDbContext>(
+                o => { o.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseAzure")); },
                 contextLifetime: ServiceLifetime.Transient,
                 optionsLifetime: ServiceLifetime.Transient
             );
@@ -30,10 +29,7 @@ namespace ChatterBox.Services.Extensions
 
             builder.Services
                 .AddRazorPages()
-                .AddRazorPagesOptions(o =>
-                {
-                    o.Conventions.AuthorizeAreaPage("Main", "/Index");
-                });
+                .AddRazorPagesOptions(o => { o.Conventions.AuthorizeAreaPage("Main", "/Index"); });
 
             builder.Services
                 .AddDefaultIdentity<ChatUser>(o =>
@@ -83,13 +79,14 @@ namespace ChatterBox.Services.Extensions
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(10);
                     o.LoginPath = "/Identity/Account/Login";
                     o.SlidingExpiration = true;
-
                 })
                 .AddGoogle(o =>
                 {
                     o.ClientId = builder.Configuration["Auth:Google:ClientId"];
                     o.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
                     o.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+                    o.Scope.Add("https://www.googleapis.com/auth/userinfo.profile");
+                    o.SaveTokens = true;
                 });
 
 

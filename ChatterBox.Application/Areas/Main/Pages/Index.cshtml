@@ -1,17 +1,28 @@
 ﻿@page
 
-@using ChatterBox.Interfaces.Entities
-@using ChatterBox.Services.Extensions
+@using System.Security.Claims
+@using Microsoft.AspNet.Identity
 @model ChatterBox.Application.Areas.Main.Pages.IndexModel;
 
 @{
-    var currentUser = await Model.GetCurrentUserAsync();
-    var targetUser = currentUser; // (await Model.GetCurrentUserAsync());
+    var userMappedCurrent = await Model.GetCurrentUserAsync();
+
+    string ResolvePicture(ClaimsPrincipal principal)
+    {
+        var address = principal.FindFirstValue("urn:google:picture");
+
+        if (String.IsNullOrEmpty(address))
+        {
+            return "/img/profile-circle.svg";
+        }
+
+        return address;
+    }
 }
 
 <link href="~/css/main.css" rel="stylesheet"/>
 
-<div class="d-flex justify-content-center w-100 mt-4">
+<div class="d-flex justify-content-center w-100 h-100 extra-chat-margin">
     <div class="d-flex chat-container">
         <div class="p-0 groups">
             <div class="group-top align-center">
@@ -21,7 +32,7 @@
             </div>
 
             <div class="group-middle">
-                @foreach (var group in Model.GetGroups())
+                @foreach (var group in Model.GetGroups(true))
                 {
                     <div class="group align-column-center">
                         <button type="button" class="btn btn-secondary rounded-circle users-btn">
@@ -48,34 +59,40 @@
 
             <div class="users-middle">
                 <ul class="list-not-styled chat-list mt-2 mb-0">
-                    @foreach (var user in Model.GetUsers())
+                    @foreach (var userMapped in Model.GetUsers())
                     {
-                        <li class="d-flex flex-row">
-                            <button class="w-100 d-flex user" data-username="@user.UserName">
-                                <img src="~/img/profile-circle.svg" alt="avatar" class="profile-circle-img">
+                        if (userMapped.User.Id != HttpContext.User.Identity.GetUserId())
+                        {
+                            <li class="d-flex flex-row">
+                                <button id="context-users-list-user"
+                                        class="w-100 d-flex user"
+                                        data-user-id="@userMapped.User.Id">
+                                    <img src="@ResolvePicture(userMapped.Principal)"
+                                         alt="avatar"
+                                         class="rounded-circle avatar @(userMapped.Online ? "avatar-online" : "avatar-offline")">
 
-                                <div class="d-flex flex-column justify-content-center">
-                                    <div class="justify-content-start">
-                                        <i class="fa fa-circle @(user.Online ? "online" : "offline")"></i>
-
-                                        @user.UserName
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <div class="justify-content-start">
+                                            @userMapped.User.UserName
+                                        </div>
                                     </div>
-                                </div>
-                            </button>
-                        </li>
+                                </button>
+                            </li>
+                        }
                     }
                 </ul>
             </div>
 
             <div class="align-center users-bottom">
                 <div class="d-flex w-75">
-                    <img src="~/img/profile-circle.svg" alt="avatar" class="profile-circle-img">
+                    <img id="context-own-avatar"
+                         src="@ResolvePicture(userMappedCurrent.Principal)"
+                         alt="avatar"
+                         class="rounded-circle avatar @(userMappedCurrent.Online ? "avatar-online" : "avatar-offline")">
 
                     <div class="d-flex flex-column justify-content-center">
                         <div class="justify-content-start">
-                            <i class="fa fa-circle @(Model.IsOnline(currentUser) ? "online" : "offline")"></i>
-
-                            @currentUser.UserName
+                            @userMappedCurrent.User.UserName
                         </div>
                     </div>
                 </div>
@@ -89,63 +106,48 @@
         </div>
 
         <div class="p-0 chat">
-            <div class="chat-top align-center-end">
-                <div class="d-flex flex-row m-2">
-                    <img src="~/img/profile-circle.svg" alt="avaStar" class="profile-circle-img">
-
-                    <div class="d-flex flex-column justify-content-center">
+            <div class="chat-top align-center">
+                <div class="d-flex flex-row m-2 justify-content-center align-items-center">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
                         <div class="justify-content-start">
-                            <i class="fa fa-circle @(Model.IsOnline(targetUser) ? "online" : "offline")"></i>
-
-                            @targetUser.UserName
+                            <span id="context-target-name" class="fw-bolder">
+                                Who are you going to talk to today?
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="chat-middle align-center">
-                <ul id="messages" class="align-column-center mt-3 user-list chat-texts">
-                    @foreach (var message in Model.GetChatMessages())
-                    {
-                        @if (message.SenderId == currentUser.Id)
-                        {
-                            <li class="clearfix w-75">
-                                <div>
-                                    <div class="message other-message w-100">@message.Text</div>
-
-                                    <div class="message-data w-100 align-center-end">
-                                        <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
-                                    </div>
-                                </div>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="clearfix w-75">
-                                <div class="message my-message w-100">@message.Text</div>
-
-                                <div class="message-data">
-                                    <span class="message-data-time">@message.DateSent.ToString("h:mm tt")</span>
-                                </div>
-                            </li>
-                        }
-                    }
-                </ul>
+            <div class="d-flex chat-middle justify-content-center w-100">
+                <div id="context-messages"
+                     class="d-flex flex-column mt-3 w-75 justify-content-center align-items-center">
+                    ...
+                </div>
             </div>
 
             <div class="chat-bottom align-center">
                 <div class="input-group mb-0 w-75">
-                    <input type="text" id="inputMessage" class="form-control" placeholder="Write...">
+                    <input id="context-input-text" type="text" class="form-control" placeholder="Write...">
 
-                    <button id="pickEmote" class="btn fa-solid fa-smile-beam fa-xl"></button>
+                    <button id="context-emote-pick" class="btn fa-regular fa-smile-beam fa-xl"></button>
 
-                    <button id="sendButton" class="btn btn-primary">Send</button>
+                    <button id="context-button-send" class="btn btn-primary">Send</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<context
+    id="context-data"
+    data-user-id="@userMappedCurrent.User.Id"
+    data-signalr-group-id=""
+    data-target-id=""
+    data-user-username="@userMappedCurrent.User.UserName"
+    data-chat-type="">
+</context>
+
+<script src="~/js/constants.js"></script>
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/chatHandler.js"></script>
 <script src="~/js/emoteHandler.js"></script>
