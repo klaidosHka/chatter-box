@@ -164,7 +164,6 @@
 .chat-middle {
     height: 620px;
     overflow-y: scroll;
-    padding-top: 220px;
 }
 
 .chat-bottom {

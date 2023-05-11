@@ -39,6 +39,10 @@ $(document).ready(() => {
     
             handleButtonSend();
         });
+        
+        $(contextIds.LISTED_USER).click(e => {
+            
+        });
     }
 
     function getContextObject() {
@@ -70,20 +74,20 @@ $(document).ready(() => {
     
     function handleChatButtonsState(enabled) {
         if (enabled === true) {
-            $(contextIds.BUTTON_SEND).prop('disabled', false);
+            $(contextIds.BUTTON_SEND).show();
             
-            $(contextIds.EMOTE_PICK).prop('disabled', false);
+            $(contextIds.EMOTE_PICK).show();
             
-            $(contextIds.INPUT_TEXT).prop('disabled', false);
+            $(contextIds.INPUT_TEXT).show();
             
             return;
         }
         
-        $(contextIds.BUTTON_SEND).prop('disabled', true);
+        $(contextIds.BUTTON_SEND).hide();
         
-        $(contextIds.EMOTE_PICK).prop('disabled', true);
+        $(contextIds.EMOTE_PICK).hide();
         
-        $(contextIds.INPUT_TEXT).prop('disabled', true);
+        $(contextIds.INPUT_TEXT).hide();
     }
 
     function handleChatTypeChange(chatType) {

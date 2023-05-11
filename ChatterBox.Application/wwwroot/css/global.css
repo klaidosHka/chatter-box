@@ -64,3 +64,11 @@ body {
 .dropdown:hover .dropdown-menu {
     display: block;
 }
+
+.dropdown-item {
+    color: white;
+}
+
+.dropdown-item:hover {
+    color: black;
+}
