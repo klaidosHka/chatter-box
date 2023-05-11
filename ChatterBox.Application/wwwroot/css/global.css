@@ -13,10 +13,6 @@ html {
     min-height: 100%;
 }
 
-body {
-    margin-bottom: 60px;
-}
-
 .chatter-box-background {
     background-image: url("../img/background.png");
     background-size: cover;

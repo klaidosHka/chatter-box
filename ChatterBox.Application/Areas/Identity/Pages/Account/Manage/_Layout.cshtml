@@ -5,16 +5,16 @@
     }
 }
 
-<h1>Manage your account</h1>
-
 <div>
-    <h2>Change your account settings</h2>
-    <hr/>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+        <h2>Change your account settings</h2>
+    </div>
     <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav"/>
+        <div class="col-md-3" style="background-color: #383434; height: 93vh;">
+            <partial name="_ManageNav" />
         </div>
         <div class="col-md-9">
+            <div d-flex justify-content-center align-items-center w-100 h-100></div>
             @RenderBody()
         </div>
     </div>
