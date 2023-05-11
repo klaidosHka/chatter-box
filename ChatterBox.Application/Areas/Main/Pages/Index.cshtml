@@ -139,6 +139,14 @@
                     <button id="context-button-send" class="btn btn-primary">Send</button>
                 </div>
             </div>
+
+            <div class="chat-bottom align-center">
+                <form onsubmit="return validateForm()">
+                    <input type="file" name="photo" accept="image/png, image/jpeg, mage/svg">
+                    <button type="submit" class="image-upload"> Upload </button>
+                </form>
+            </div>
+
         </div>
     </div>
 </div>
@@ -160,3 +168,4 @@
 <script src="~/js/emoteHandler.js"></script>
 <script src="~/js/userListClose.js"></script>
 <script src="~/js/userSearch.js"></script>
+<script src="~/js/imageUploadHandler.js"></script>
