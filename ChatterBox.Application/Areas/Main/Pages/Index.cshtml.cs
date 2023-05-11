@@ -1,9 +1,10 @@
-﻿using ChatterBox.Interfaces.Entities;
+﻿using ChatterBox.Context;
+using ChatterBox.Interfaces.Dto;
+using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Services;
-using ChatterBox.Services.Extensions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatterBox.Application.Areas.Main.Pages
@@ -31,36 +32,17 @@ namespace ChatterBox.Application.Areas.Main.Pages
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> CreateGroupMessageAsync(ChatGroupMessage message)
+        public async Task OnGetAsync()
         {
-            if (!ModelState.IsValid)
+            if (User is null || await GetCurrentUserAsync() is null)
             {
-                return BadRequest();
+                HttpContext.Response.Cookies.Append("ChatterBoxCookie", "", new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddMonths(-1)
+                });
+                
+                HttpContext.Response.Redirect("Index");
             }
-
-            var user = await GetCurrentUserAsync();
-
-            message.SenderId = user.Id;
-
-            await _chatGroupMessageService.ImportAsync(message);
-
-            return Page();
-        }
-
-        public async Task<IActionResult> CreateMessageAsync(ChatMessage message)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var user = await GetCurrentUserAsync();
-
-            message.SenderId = user.Id;
-
-            await _chatMessageService.ImportAsync(message);
-
-            return Page();
         }
 
         public IQueryable<ChatMessage> GetChatMessages()
@@ -70,41 +52,37 @@ namespace ChatterBox.Application.Areas.Main.Pages
                 .AsQueryable();
         }
 
-        public async Task<ChatUser> GetCurrentUserAsync()
+        public async Task<UserMapped> GetCurrentUserAsync()
         {
-            return await _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
+            
+            return new UserMapped
+            {
+                Online = ChatHub.IsOnline(user.Id),
+                Principal = await _signInManager.CreateUserPrincipalAsync(user),
+                User = user
+            };
         }
 
-        public IQueryable<ChatGroup> GetGroups()
+        public IQueryable<ChatGroup> GetGroups(bool joined)
         {
             return _chatGroupService
                 .GetGroupsAsNoTracking()
                 .AsQueryable();
         }
 
-        public IQueryable<UserViewModel> GetUsers()
+        public IQueryable<UserMapped> GetUsers()
         {
             return _userManager.Users
                 .AsNoTracking()
                 .ToList()
-                .Select(u => new UserViewModel
+                .Select(u => new UserMapped
                 {
-                    Online = _signInManager.IsSignedIn(_signInManager.CreateUserPrincipalAsync(u).Result),
-                    UserName = u.UserName
+                    Online = ChatHub.IsOnline(u.Id),
+                    Principal = _signInManager.CreateUserPrincipalAsync(u).Result,
+                    User = u
                 })
                 .AsQueryable();
         }
-
-        public bool IsOnline(ChatUser user)
-        {
-            return user.IsOnlineAsync(_signInManager).Result;
-        }
-    }
-
-    public class UserViewModel
-    {
-        public bool Online { get; set; }
-
-        public string UserName { get; set; } = string.Empty;
     }
 }

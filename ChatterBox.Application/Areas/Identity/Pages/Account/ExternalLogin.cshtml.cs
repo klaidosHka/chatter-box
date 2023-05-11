@@ -1,5 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
 #nullable disable
 
 using System;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using ChatterBox.Interfaces.Entities;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ChatterBox.Application.Areas.Identity.Pages.Account
 {
@@ -80,8 +82,7 @@ namespace ChatterBox.Application.Areas.Identity.Pages.Account
         {
             public string? Email { get; set; }
 
-            [Required]
-            public string Nickname { get; set; }
+            [Required] public string Nickname { get; set; }
         }
 
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -161,6 +162,18 @@ namespace ChatterBox.Application.Areas.Identity.Pages.Account
                     if (result.Succeeded)
                     {
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+                        
+                        if (info.Principal.HasClaim(c => c.Type == "urn:google:picture"))
+                        {
+                            await _userManager.AddClaimAsync(user, info.Principal.FindFirst("urn:google:picture"));
+                        }
+                        
+                        var props = new AuthenticationProperties
+                        {
+                            IsPersistent = false
+                        };
+                        
+                        props.StoreTokens(info.AuthenticationTokens);
 
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -179,8 +192,8 @@ namespace ChatterBox.Application.Areas.Identity.Pages.Account
                         {
                             return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
                         }
-
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+                        
+                        await _signInManager.SignInAsync(user, props, info.LoginProvider);
                         return LocalRedirect("/Main");
                     }
                 }
@@ -204,8 +217,8 @@ namespace ChatterBox.Application.Areas.Identity.Pages.Account
             catch
             {
                 throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
+                                                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                                                    $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
             }
         }
 

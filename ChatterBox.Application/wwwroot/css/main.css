@@ -14,53 +14,22 @@
 
 .message {
     color: #444;
-    padding: 18px 20px;
+    margin-top: 5px;
+    padding: 10px 10px;
     line-height: 26px;
-    font-size: 16px;
+    font-size: 14px;
     border-radius: 7px;
     display: inline-block;
     position: relative;
     min-width: 50px;
 }
 
-.message:after {
-    bottom: 100%;
-    left: 7%;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border: 10px solid transparent;
-    border-bottom-color: #fff;
-    margin-left: -10px;
-}
-
 .my-message {
     background: #efefef
 }
 
-.my-message:after {
-    bottom: 100%;
-    left: 30px;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border: 10px solid transparent;
-    border-bottom-color: #efefef;
-    margin-left: -10px;
-}
-
 .other-message {
     background: #e8f1f3;
-    text-align: right;
-}
-
-.other-message:after {
-    border-bottom-color: #e8f1f3;
-    left: 93%;
 }
 
 .chat-message {
@@ -195,16 +164,24 @@
 .chat-middle {
     height: 620px;
     overflow-y: scroll;
-    padding-top: 220px;
 }
 
 .chat-bottom {
     height: 75px;
 }
 
-.profile-circle-img {
+.avatar {
     height: 50px;
     width: 50px;
+    margin-right: 10px;
+}
+
+.avatar-online {
+    border: 2px solid yellowgreen;
+}
+
+.avatar-offline {
+    border: 2px solid darkred;
 }
 
 .list-not-styled {
@@ -246,4 +223,18 @@
     color: #fff;
     background-color: #0d6efd;
     border-color: #0d6efd;
+}
+
+.extra-chat-margin {
+    margin-top: 60px;
+}
+
+#pickEmote {
+    transition: 0.5s;
+    transition-property: color, opacity;
+}
+
+#pickEmote:hover {
+    opacity: 0.9;
+    color: darkred;
 }
