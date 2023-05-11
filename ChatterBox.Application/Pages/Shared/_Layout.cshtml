@@ -36,19 +36,22 @@
         </div>
 
         <div class="d-flex col-md-6 m-auto justify-content-end align-items-center">
-            <!-- User dropdown -->
-            <div class="dropdown">
-                <a href="#" class="dropdown-toggle text-decoration-none" role="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="text-white fw-normal">@SignInManager.Context.User.Identity.Name</span>
-                    <img src="~/img/profile-circle.svg" alt="avatar" />
-                </a>
-                <div class="dropdown-menu" aria-labelledby="userDropdown">
-                    <!-- Dropdown content -->
-                    <a class="dropdown-item" href="~/Identity/Account/Manage">Profile</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="~/Identity/Account/Logout">Logout</a>
+            <!-- User dropdown (rendered only when authenticated) -->
+            @if (SignInManager?.Context?.User.Identity?.IsAuthenticated ?? false)
+            {
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle text-decoration-none" role="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="text-white fw-normal">@SignInManager.Context.User.Identity.Name</span>
+                        <img src="~/img/profile-circle.svg" alt="avatar" />
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <!-- Dropdown content -->
+                        <a class="dropdown-item" href="~/Identity/Account/Manage">Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="~/Identity/Account/Logout">Logout</a>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     </header>
 
