@@ -146,20 +146,6 @@
                     <input type="file" name="photo" accept="image/png, image/jpeg, mage/svg">
                     <button type="submit" class="image-upload"> Upload </button>
                 </form>
-
-                <script>
-                    function validateForm() {
-                        var allowedTypes = ['image/png', 'image/jpeg', 'image/svg'];
-                        var fileInput = document.querySelector('input[name="photo"]');
-                        var file = fileInput.files[0];
-
-                        if (!file || allowedTypes.indexOf(file.type) === -1) {
-                            alert('Prašome pasirinkti tinkamo formato failą (.jpg, .png, .svg.)');
-                            return false;
-                        }
-                        return true;
-                    }
-                </script>
             </div>
 
         </div>
@@ -181,3 +167,4 @@
 <script src="~/js/emoteHandler.js"></script>
 <script src="~/js/userListClose.js"></script>
 <script src="~/js/userSearch.js"></script>
+<script src="~/js/imageUploadHandler.js"></script>
