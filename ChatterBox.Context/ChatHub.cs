@@ -1,5 +1,6 @@
 ﻿using ChatterBox.Interfaces.Dto;
 using ChatterBox.Interfaces.Entities;
+using ChatterBox.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,12 +8,14 @@ namespace ChatterBox.Context
 {
     public class ChatHub : Hub
     {
-        public static readonly IDictionary<string, string> OnlineUsers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        
+        private static readonly IDictionary<string, string> OnlineUsers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        private readonly IChatMessageService _messageService;
         private readonly UserManager<ChatUser> _userManager;
 
-        public ChatHub(UserManager<ChatUser> userManager)
+        public ChatHub(IChatMessageService messageService, UserManager<ChatUser> userManager)
         {
+            _messageService = messageService;
             _userManager = userManager;
         }
 
@@ -29,7 +32,7 @@ namespace ChatterBox.Context
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
-            
+
             OnlineUsers[Context.UserIdentifier] = Context.ConnectionId;
 
             await Clients.All.SendAsync("OnConnected", Context.UserIdentifier);
@@ -46,12 +49,23 @@ namespace ChatterBox.Context
 
         public async Task SendMessage(SendMessageRequest request)
         {
+            await _messageService.ImportAsync(
+                new ChatMessage
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ReceiverId = request.ReceiverId,
+                    SenderId = request.SenderId,
+                    DateSent = request.DateSent,
+                    Text = request.Text
+                }
+            );
+
             await Clients.All.SendAsync(
                 "ReceiveMessage",
-                new SendMessageResponseRequest
+                new SendMessageResponse
                 {
                     DateSent = request.DateSent,
-                    Id = request.SenderId,
+                    UserId = request.SenderId,
                     UserName = _userManager.Users
                         .AsEnumerable()
                         .FirstOrDefault(u => u.Id.ToString() == request.SenderId, new ChatUser()).UserName,
@@ -64,10 +78,10 @@ namespace ChatterBox.Context
         {
             await Clients.All.SendAsync(
                 "ReceiveMessage",
-                new SendMessageResponseRequest
+                new SendMessageResponse
                 {
                     DateSent = request.DateSent,
-                    Id = request.SenderId,
+                    UserId = request.SenderId,
                     UserName = _userManager.Users
                         .FirstOrDefault(u => u.Id.ToString() == request.SenderId, new ChatUser()).UserName,
                     Text = request.Text

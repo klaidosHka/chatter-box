@@ -1,6 +1,7 @@
 ﻿using ChatterBox.Context;
 using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatterBox.Services.Repositories
 {
@@ -15,7 +16,9 @@ namespace ChatterBox.Services.Repositories
 
         public IQueryable<ChatMessage> Get()
         {
-            return _dbContext.ChatMessages;
+            return _dbContext.ChatMessages
+                .Include(m => m.Sender)
+                .Include(m => m.Receiver);
         }
 
         public async Task ImportAsync(ChatMessage message)

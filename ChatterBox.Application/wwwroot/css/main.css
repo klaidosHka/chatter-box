@@ -122,6 +122,10 @@
     border-radius: 5px;
 }
 
+.user-active-target {
+    background-color: #cbe3b3;
+}
+
 .users-top {
     height: 75px;
     border-bottom-style: solid;

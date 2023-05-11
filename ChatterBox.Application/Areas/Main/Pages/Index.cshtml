@@ -63,12 +63,12 @@
                     {
                         if (userMapped.User.Id != HttpContext.User.Identity.GetUserId())
                         {
-                            <li class="d-flex flex-row">
-                                <button id="context-users-list-user"
-                                        class="w-100 d-flex user"
-                                        data-user-id="@userMapped.User.Id">
+                            <li class="d-flex flex-row context-users-list-user"
+                                data-target-id="@userMapped.User.Id"
+                                data-target-username="@userMapped.User.UserName">
+                                <button class="w-100 d-flex user">
                                     <img src="@ResolvePicture(userMapped.Principal)"
-                                         alt="avatar"
+                                         alt=""
                                          class="rounded-circle avatar @(userMapped.Online ? "avatar-online" : "avatar-offline")">
 
                                     <div class="d-flex flex-column justify-content-center">
@@ -87,7 +87,7 @@
                 <div class="d-flex w-75">
                     <img id="context-own-avatar"
                          src="@ResolvePicture(userMappedCurrent.Principal)"
-                         alt="avatar"
+                         alt=""
                          class="rounded-circle avatar @(userMappedCurrent.Online ? "avatar-online" : "avatar-offline")">
 
                     <div class="d-flex flex-column justify-content-center">
@@ -118,13 +118,12 @@
             </div>
 
             <div class="d-flex chat-middle justify-content-center w-100">
-                <div id="context-messages"
-                     class="d-flex flex-column mt-3 w-75 justify-content-center align-items-center">
-                    <div class="fw-bolder d-flex flex-column align-items-center">
-                        <p>
+                <div id="context-messages-parent" class="d-flex flex-column mt-3 w-75 justify-content-center align-items-center">
+                    <div id="context-messages" class="d-flex flex-column w-100 align-items-center">
+                        <p class="fw-bolder">
                             Who are you going to talk to today?
                         </p>
-                        <p>
+                        <p class="fw-bolder">
                             Please select an user or a group to begin chatting.
                         </p>
                     </div>
@@ -146,11 +145,13 @@
 
 <context
     id="context-data"
-    data-user-id="@userMappedCurrent.User.Id"
+    data-chat-type=""
     data-signalr-group-id=""
     data-target-id=""
+    data-target-username=""
+    data-user-id="@userMappedCurrent.User.Id"
     data-user-username="@userMappedCurrent.User.UserName"
-    data-chat-type="">
+    >
 </context>
 
 <script src="~/js/constants.js"></script>

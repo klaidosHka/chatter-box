@@ -1,22 +1,21 @@
-﻿const searchInput = document.getElementById('user-search-input');
-const userList = document.querySelector('.chat-list');
-const userButtons = Array.from(userList.querySelectorAll('.user'));
+﻿const inputSearch = $('#user-search-input');
+const users = $(chatElementIds.LISTED_USER);
 
-searchInput.addEventListener(
-    'input',
-    () => {
-        const searchTerm = searchInput.value
-            .trim()
+inputSearch.on('input', () => {
+    const searchTerm = inputSearch
+        .val()
+        .trim()
+        .toLowerCase();
+
+    users.each((i, u) => {        
+        const username = $(u)
+            .data('target-username')
             .toLowerCase();
 
-        userButtons.forEach(button => {
-            const username = button.dataset.username.toLowerCase();
-
-            if (username.includes(searchTerm)) {
-                button.classList.remove('d-none');
-            } else {
-                button.classList.add('d-none');
-            }
-        });
-    }
-);
+        if (username.includes(searchTerm)) {
+            $(u).removeClass("d-none");
+        } else {
+            $(u).addClass("d-none");
+        }
+    });
+});

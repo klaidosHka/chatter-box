@@ -1,7 +1,7 @@
-﻿using ChatterBox.Interfaces.Entities;
+﻿using System.Data.Entity;
+using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Repositories;
 using ChatterBox.Interfaces.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace ChatterBox.Services.Services
 {

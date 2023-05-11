@@ -3,12 +3,13 @@ using ChatterBox.Interfaces.Dto;
 using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatterBox.Application.Areas.Main.Pages
 {
+    [IgnoreAntiforgeryToken]
     public class IndexModel : PageModel
     {
         private readonly IChatGroupService _chatGroupService;
@@ -30,19 +31,6 @@ namespace ChatterBox.Application.Areas.Main.Pages
             _chatMessageService = chatMessageService;
             _signInManager = signInManager;
             _userManager = userManager;
-        }
-
-        public async Task OnGetAsync()
-        {
-            if (User is null || await GetCurrentUserAsync() is null)
-            {
-                HttpContext.Response.Cookies.Append("ChatterBoxCookie", "", new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddMonths(-1)
-                });
-                
-                HttpContext.Response.Redirect("Index");
-            }
         }
 
         public IQueryable<ChatMessage> GetChatMessages()
@@ -83,6 +71,39 @@ namespace ChatterBox.Application.Areas.Main.Pages
                     User = u
                 })
                 .AsQueryable();
+        }
+
+        public async Task OnGetAsync()
+        {
+            if (User is null || await GetCurrentUserAsync() is null)
+            {
+                HttpContext.Response.Cookies.Append("ChatterBoxCookie", "", new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddMonths(-1)
+                });
+                
+                HttpContext.Response.Redirect("Index");
+            }
+        }
+
+        public JsonResult OnGetMessages(string userId, string targetId)
+        {
+            return new JsonResult(
+                _chatMessageService
+                    .GetMessagesAsNoTracking()
+                    .Where(m => 
+                        m.SenderId == userId && m.ReceiverId == targetId ||
+                        m.SenderId == targetId && m.ReceiverId == userId
+                    )
+                    .Select(m => new Message
+                    {
+                        DateSent = m.DateSent,
+                        UserId = m.SenderId,
+                        UserName = m.Sender.UserName,
+                        Text = m.Text
+                    })
+                    .ToList()
+            );
         }
     }
 }
