@@ -7946,7 +7946,7 @@
 new EmojiPicker({
     trigger: [
         {
-            selector: '#context-emote-pick',
+            selector: '#context-input-emote',
             insertInto: ['#context-input-text']
         }
     ],

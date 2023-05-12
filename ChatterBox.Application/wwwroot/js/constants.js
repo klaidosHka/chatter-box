@@ -1,7 +1,8 @@
 ﻿const chatElementIds = {
     BUTTON_SEND: "#context-button-send",
     CONTEXT_DATA: "#context-data",
-    EMOTE_PICK: "#context-emote-pick",
+    INPUT_EMOTE: "#context-input-emote",
+    INPUT_FILE: "#context-input-file",
     INPUT_TEXT: "#context-input-text",
     LISTED_USER: ".context-users-list-user",
     MESSAGES: "#context-messages",

@@ -131,22 +131,20 @@
             </div>
 
             <div class="chat-bottom align-center">
-                <div class="input-group mb-0 w-75">
-                    <input id="context-input-text" type="text" class="form-control" placeholder="Write...">
+                <div class="input input-group mb-0 w-75 justify-content-between">
+                    <input id="context-input-text" type="text" class="form-control rounded" placeholder="Write...">
 
-                    <button id="context-emote-pick" class="btn fa-regular fa-smile-beam fa-xl"></button>
-
-                    <button id="context-button-send" class="btn btn-primary">Send</button>
+                    <div class="d-flex input-buttons justify-content-between align-items-center">
+                        <text-input id="context-input-emote" class="text-input fa-regular fa-smile-beam fa-xl"></text-input>
+                        
+                        <text-input id="context-input-file" class="text-input fa-solid fa-file-arrow-up fa-xl"></text-input>
+                    </div>
+                    
+                    <div class="d-flex input-end justify-content-end">
+                        <button id="context-button-send" class="btn btn-primary rounded w-75">Send</button>
+                    </div>
                 </div>
             </div>
-
-            <div class="chat-bottom align-center">
-                <form onsubmit="return validateForm()">
-                    <input type="file" name="photo" accept="image/png, image/jpeg, mage/svg">
-                    <button type="submit" class="image-upload"> Upload </button>
-                </form>
-            </div>
-
         </div>
     </div>
 </div>
@@ -164,8 +162,10 @@
 
 <script src="~/js/constants.js"></script>
 <script src="~/lib/signalr/signalr.js"></script>
-<script src="~/js/chatHandler.js"></script>
-<script src="~/js/emoteHandler.js"></script>
-<script src="~/js/userListClose.js"></script>
-<script src="~/js/userSearch.js"></script>
-<script src="~/js/imageUploadHandler.js"></script>
+<script src="~/js/handlers/signalRHandler.js"></script>
+<script src="~/js/handlers/chatHandler.js"></script>
+<script src="~/js/handlers/userConnectionHandler.js"></script>
+<script src="~/js/handlers/emotesHandler.js"></script>
+<script src="~/js/handlers/userListCloseHandler.js"></script>
+<script src="~/js/handlers/userSearchHandler.js"></script>
+<script src="~/js/handlers/imageUploadHandler.js"></script>

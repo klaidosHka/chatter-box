@@ -102,6 +102,7 @@ namespace ChatterBox.Application.Areas.Main.Pages
                         UserName = m.Sender.UserName,
                         Text = m.Text
                     })
+                    .OrderBy(m => m.DateSent)
                     .ToList()
             );
         }

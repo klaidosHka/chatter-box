@@ -233,12 +233,48 @@
     margin-top: 60px;
 }
 
-#pickEmote {
+#context-input-emote {
     transition: 0.5s;
     transition-property: color, opacity;
 }
 
-#pickEmote:hover {
+#context-input-emote:hover {
     opacity: 0.9;
-    color: darkred;
+    color: lightskyblue;
+    cursor: pointer;
+}
+
+#context-input-file {
+    transition: 0.5s;
+    transition-property: color, opacity;
+}
+
+#context-input-file:hover {
+    opacity: 0.9;
+    color: lightskyblue;
+    cursor: pointer;
+}
+
+#context-input-text {
+    padding-right: 10%;
+}
+
+.input {
+    position: relative;
+    width: 90%;
+    z-index: 1;
+}
+
+.input-buttons {
+    position: absolute;
+    display: flex;
+    gap: 5px;
+    right: 13%;
+    top: 0;
+    height: 100%;
+    z-index: 10;
+}
+
+.input-end {
+    width: 10%;
 }

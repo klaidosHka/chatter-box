@@ -3,14 +3,24 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
+<style>
+    .itm {
+        background-color: #383434;
+    }
+    
+    .itm:hover {
+        background-color: rgba(0, 123, 255, 0.8);
+    }
+</style>
+
 <ul class="nav nav-pills flex-column">
-    <li class="nav-item" style="background-color: #383434; border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index" style="color: white;">Profile</a></li>
-    <li class="nav-item" style="background-color: #383434; border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email" style="color: white;">Email</a></li>
-    <li class="nav-item" style="background-color: #383434; border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword" style="color: white;">Password</a></li>
+    <li class="nav-item itm" style="border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index" style="color: white;">Profile</a></li>
+    <li class="nav-item itm" style="border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email" style="color: white;">Email</a></li>
+    <li class="nav-item itm" style="border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword" style="color: white;">Password</a></li>
     @if (hasExternalLogins)
     {
-        <li id="external-logins" class="nav-item" style="background-color: #383434; border-top: 1px solid #383434;"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins" style="color: white;">External logins</a></li>
+        <li id="external-logins" class="nav-item itm" style="border-top: 1px solid #383434;"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins" style="color: white;">External logins</a></li>
     }
-    <li class="nav-item" style="background-color: #383434; border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication" style="color: white;">Two-factor authentication</a></li>
-    <li class="nav-item" style="background-color: #383434; border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData" style="color: white;">Personal data</a></li>
+    <li class="nav-item itm" style="border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication" style="color: white;">Two-factor authentication</a></li>
+    <li class="nav-item itm" style="border-top: 1px solid #383434;"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData" style="color: white;">Personal data</a></li>
 </ul>
