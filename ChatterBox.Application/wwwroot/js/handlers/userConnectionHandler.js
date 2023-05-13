@@ -1,6 +1,9 @@
-﻿$(document).ready(() => {
+﻿let directChatsByUserId = [];
+let groupChatsByGroupId = [];
+
+$(document).ready(() => {
     let connection = getConnection();
-    
+
     connection.on('OnConnected', userId => handleConnectionStatusChange(userId, true));
     connection.on('OnDisconnected', userId => handleConnectionStatusChange(userId, false));
 });
@@ -29,4 +32,19 @@ function handleOwnAvatar(userId, isOnline) {
     avatarImage.removeClass("avatar-online avatar-offline");
 
     avatarImage.addClass(isOnline ? "avatar-online" : "avatar-offline");
+}
+
+function handleUserAddToDirectChat(userId, targetId) {
+    if (targetId === userId || targetId === getContextValues().userId) {
+        return;
+    }
+    
+    getConnection()
+        .invoke("AddUserToDirectChat", userId, targetId)
+        .then(v => {
+            directChatsByUserId[targetId] = v;
+        })
+        .catch(e => {
+            console.error(e.toString());
+        });
 }

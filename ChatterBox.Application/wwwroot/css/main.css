@@ -278,3 +278,23 @@
 .input-end {
     width: 10%;
 }
+
+.green {
+    color: forestgreen;
+}
+
+dialog {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+dialog div {
+    color: rgba(255, 10, 50, 0.9);
+}
+
+dialog::backdrop {
+    background: black;
+    opacity: 0.3;
+    overflow: hidden;
+}

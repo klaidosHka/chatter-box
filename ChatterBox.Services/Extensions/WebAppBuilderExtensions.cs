@@ -49,6 +49,7 @@ namespace ChatterBox.Services.Extensions
             builder.Services.AddSingleton<IChatGroupRegistrarService, ChatGroupRegistrarService>();
             builder.Services.AddSingleton<IChatGroupService, ChatGroupService>();
             builder.Services.AddSingleton<IChatMessageService, ChatMessageService>();
+            builder.Services.AddSingleton<IHelperService, HelperService>();
 
             // Repositories
             builder.Services.AddSingleton<IChatGroupMessageRepository, ChatGroupMessageRepository>();

@@ -8,7 +8,8 @@
     MESSAGES: "#context-messages",
     MESSAGES_PARENT: "#context-messages-parent",
     OWN_AVATAR: "#context-own-avatar",
-    TARGET_NAME: "#context-target-name"
+    TARGET_NAME: "#context-target-name",
+    WRONG_INPUT_FILE_DIALOG: "#wrong-input-file-dialog"
 }
 
 const chatTypeIds = {
@@ -18,14 +19,8 @@ const chatTypeIds = {
 
 const contextAttributeIds = {
     CHAT_TYPE: "data-chat-type",
-    SIGNALR_GROUP_ID: "data-signalr-group-id",
     USER_ID: "data-user-id",
     USER_TARGET_ID: "data-target-id",
     USER_TARGET_NAME: "data-target-username",
     USER_NAME: "data-user-username"
-};
-
-const signalRPrefix = {
-    GROUP: "grp__",
-    DIRECT: "drct__"
 };

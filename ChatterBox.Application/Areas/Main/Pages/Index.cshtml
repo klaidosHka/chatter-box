@@ -5,6 +5,8 @@
 @model ChatterBox.Application.Areas.Main.Pages.IndexModel;
 
 @{
+    ViewData["Title"] = "Chat";
+  
     var userMappedCurrent = await Model.GetCurrentUserAsync();
 
     string ResolvePicture(ClaimsPrincipal principal)
@@ -149,10 +151,21 @@
     </div>
 </div>
 
+<dialog id="wrong-input-file-dialog">
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <div class="fw-bolder">
+            Your chosen file is not a image, only images are accepted (.jpg, .png, .gif, ...)
+        </div>
+        
+        <div>
+            Press anywhere to close the popup
+        </div>
+    </div>
+</dialog>
+
 <context
     id="context-data"
     data-chat-type=""
-    data-signalr-group-id=""
     data-target-id=""
     data-target-username=""
     data-user-id="@userMappedCurrent.User.Id"

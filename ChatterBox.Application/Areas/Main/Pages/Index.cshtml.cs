@@ -15,6 +15,7 @@ namespace ChatterBox.Application.Areas.Main.Pages
         private readonly IChatGroupService _chatGroupService;
         private readonly IChatGroupMessageService _chatGroupMessageService;
         private readonly IChatMessageService _chatMessageService;
+        private readonly IHelperService _helperService;
         private readonly SignInManager<ChatUser> _signInManager;
         private readonly UserManager<ChatUser> _userManager;
 
@@ -22,6 +23,7 @@ namespace ChatterBox.Application.Areas.Main.Pages
             IChatGroupService chatGroupService,
             IChatGroupMessageService chatGroupMessageService,
             IChatMessageService chatMessageService,
+            IHelperService helperService,
             SignInManager<ChatUser> signInManager,
             UserManager<ChatUser> userManager
         )
@@ -29,6 +31,7 @@ namespace ChatterBox.Application.Areas.Main.Pages
             _chatGroupService = chatGroupService;
             _chatGroupMessageService = chatGroupMessageService;
             _chatMessageService = chatMessageService;
+            _helperService = helperService;
             _signInManager = signInManager;
             _userManager = userManager;
         }
@@ -98,8 +101,10 @@ namespace ChatterBox.Application.Areas.Main.Pages
                     .Select(m => new Message
                     {
                         DateSent = m.DateSent,
-                        UserId = m.SenderId,
-                        UserName = m.Sender.UserName,
+                        ReceiverId = m.ReceiverId,
+                        SenderId = m.SenderId,
+                        SenderUserName = m.Sender.UserName,
+                        SignalrId = _helperService.ResolveDirectChatId(m.SenderId, m.ReceiverId),
                         Text = m.Text
                     })
                     .OrderBy(m => m.DateSent)

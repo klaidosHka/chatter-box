@@ -22,8 +22,9 @@ $(document).ready(() => {
     $(chatElementIds.LISTED_USER).click(e => {
         let user = $(e.currentTarget);
         let userId = user.attr(contextAttributeIds.USER_TARGET_ID);
+        let contextValues = getContextValues();
 
-        if (userId === getContextValues().userTargetId) {
+        if (userId === contextValues.userTargetId) {
             return;
         }
 
@@ -43,6 +44,8 @@ $(document).ready(() => {
 
         context.attr(contextAttributeIds.CHAT_TYPE, chatTypeIds.DIRECT);
 
+        handleUserAddToDirectChat(contextValues.userId, userId);
+
         handleChatViewChange(true);
     });
 });
@@ -56,7 +59,6 @@ function getContextValues() {
 
     return {
         chatType: context.attr(contextAttributeIds.CHAT_TYPE),
-        signalRGroupId: context.attr(contextAttributeIds.SIGNALR_GROUP_ID),
         userId: context.attr(contextAttributeIds.USER_ID),
         userName: context.attr(contextAttributeIds.USER_NAME),
         userTargetId: context.attr(contextAttributeIds.USER_TARGET_ID),
@@ -80,6 +82,10 @@ function handleButtonSend() {
 }
 
 function handleChatViewChange(enabled) {
+    let inputFile = $(chatElementIds.INPUT_FILE).removeClass("green");
+
+    image = null;
+
     if (enabled === true) {
         $(chatElementIds.BUTTON_SEND).show();
 
@@ -87,7 +93,7 @@ function handleChatViewChange(enabled) {
 
         $(chatElementIds.INPUT_TEXT).show();
 
-        $(chatElementIds.INPUT_FILE).show();
+        inputFile.show();
 
         $(chatElementIds.TARGET_NAME).text(getContextValues().userTargetName)
 
@@ -126,13 +132,24 @@ function handleChatViewChange(enabled) {
 
     $(chatElementIds.INPUT_TEXT).hide();
 
-    $(chatElementIds.INPUT_FILE).hide();
+    inputFile.hide();
 }
 
-function handleMessageReceive(request) {
+function handleMessageReceive(request) {      
+    if (!request.signalrId || !request.receiverId || !request.senderId) {
+        return;
+    }
+    
+    if (request.signalrId !== directChatsByUserId[getContextValues().userTargetId]) {
+        // add unread notification next to the [@senderId] user in the list
+        
+        return;
+    }
+    
     request.text = reformatText(request.text);
 
-    let isOwn = getContextValues().userId === request.userId;
+    let isOwn = getContextValues().userId === request.senderId;
+    let messages = $(chatElementIds.MESSAGES);
 
     $("<div>")
         .addClass("card w-100 message " + (isOwn ? "my-message" : "other-message"))
@@ -140,22 +157,31 @@ function handleMessageReceive(request) {
             $("<div>")
                 .addClass("card-body w-100")
                 .append(
-                    $("<p>")
-                        .addClass("card-title")
+                    $("<div>")
+                        .addClass("d-flex card-title row justify-content-between align-items-center")
                         .append(
                             $("<span>")
-                                .addClass("fw-bold")
-                                .text(request.userName)
+                                .addClass("d-flex fw-bold w-50 justify-content-start align-items-center")
+                                .text(request.senderUserName + (isOwn ? " (You)" : ""))
                         )
-                        .append(" " + new Date(request.dateSent).toLocaleString('lt-LT', {hour12: false}))
+                        .append(
+                            $("<div>")
+                                .addClass("d-flex w-50 justify-content-end align-items-center")
+                                .append(" " + new Date(request.dateSent).toLocaleString('lt-LT', {hour12: false}))
+                        )
                 )
                 .append(
-                    $("<p>")
+                    $("<div>")
                         .addClass("card-text")
                         .text(request.text)
                 )
         )
-        .appendTo($(chatElementIds.MESSAGES));
+        .appendTo(messages);
+
+    $(".chat-middle")
+        .find(chatElementIds.MESSAGES)
+        .children(':last-child')[0]
+        .scrollIntoView();
 }
 
 function handleMessageSend(message) {
@@ -165,13 +191,13 @@ function handleMessageSend(message) {
         DateSent: new Date(),
         ReceiverId: context.userTargetId,
         SenderId: context.userId,
-        SignalrId: context.signalRGroupId,
+        SignalrId: directChatsByUserId[context.userTargetId],
         Text: message
     };
 
     getConnection()
         .invoke(context.chatType === chatTypeIds.GROUP ? "SendGroupMessage" : "SendMessage", request)
-        .catch(function (e) {
+        .catch(e => {
             console.error(e.toString());
         });
 }
