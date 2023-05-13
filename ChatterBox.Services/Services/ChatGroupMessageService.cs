@@ -2,15 +2,19 @@
 using ChatterBox.Interfaces.Repositories;
 using ChatterBox.Interfaces.Services;
 using System.Data.Entity;
+using ChatterBox.Interfaces.Dto;
 
 namespace ChatterBox.Services.Services
 {
     public class ChatGroupMessageService : IChatGroupMessageService
     {
+        private readonly IHelperService _helperService;
         private readonly IChatGroupMessageRepository _messageRepository;
 
-        public ChatGroupMessageService(IChatGroupMessageRepository chatGroupMessageRepository)
+        public ChatGroupMessageService(IHelperService helperService,
+            IChatGroupMessageRepository chatGroupMessageRepository)
         {
+            _helperService = helperService;
             _messageRepository = chatGroupMessageRepository;
         }
 
@@ -24,6 +28,26 @@ namespace ChatterBox.Services.Services
             return _messageRepository
                 .Get()
                 .AsNoTracking();
+        }
+
+        public IEnumerable<GroupMessage> GetMapped(string groupId)
+        {
+            var signalrId = _helperService.ResolveGroupChatId(groupId);
+
+            return GetAsNoTracking()
+                .Where(m => m.GroupId == groupId)
+                .Select(m => new GroupMessage
+                {
+                    DateSent = m.DateSent,
+                    GroupId = m.GroupId,
+                    ImageLink = m.ImageLink,
+                    SenderId = m.SenderId,
+                    SenderUserName = m.Sender.UserName,
+                    SignalrId = signalrId,
+                    Text = m.Text
+                })
+                .OrderBy(m => m.DateSent)
+                .ToList();
         }
 
         public async Task ImportAsync(ChatGroupMessage message)

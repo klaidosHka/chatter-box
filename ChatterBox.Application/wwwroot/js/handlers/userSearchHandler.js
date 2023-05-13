@@ -9,7 +9,7 @@ inputSearch.on('input', () => {
 
     users.each((i, u) => {        
         const username = $(u)
-            .data('target-username')
+            .attr(targetAttributeIds.NAME)
             .toLowerCase();
 
         if (username.includes(searchTerm)) {

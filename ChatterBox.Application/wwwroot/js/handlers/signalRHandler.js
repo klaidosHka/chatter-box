@@ -8,13 +8,8 @@ $(document).ready(() => {
         })
         .withAutomaticReconnect()
         .build();
-
-    connection
-        .start()
-        .catch(e => {
-            console.error(e);
-        });
-
+    
+    connection.start();
 });
 
 function getConnection() {

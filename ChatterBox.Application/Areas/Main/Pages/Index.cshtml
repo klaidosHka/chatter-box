@@ -6,7 +6,7 @@
 
 @{
     ViewData["Title"] = "Chat";
-  
+
     var userMappedCurrent = await Model.GetCurrentUserAsync();
 
     string ResolvePicture(ClaimsPrincipal principal)
@@ -28,16 +28,19 @@
     <div class="d-flex chat-container">
         <div class="p-0 groups">
             <div class="group-top align-center">
-                <button type="button" class="btn btn-secondary rounded-circle users-btn" id="toggle-users">
-                    <i class="fa-solid fa-list"></i>
+                <button id="context-home-button" type="button" class="btn btn-secondary rounded-circle btn-sized">
+                    <i class="fa-solid fa-house"></i>
                 </button>
             </div>
 
             <div class="group-middle">
-                @foreach (var group in Model.GetGroups(true))
+                @foreach (var group in Model.GetGroupsJoined())
                 {
                     <div class="group align-column-center">
-                        <button type="button" class="btn btn-secondary rounded-circle users-btn">
+                        <button type="button"
+                                class="btn btn-secondary rounded-circle btn-sized"
+                                data-own-id="@group.Id"
+                                data-own-name="@group.Name">
                             <i class="fa-solid fa-layer-group"></i>
                         </button>
                         @group.Name
@@ -46,7 +49,7 @@
             </div>
 
             <div class="group-bottom align-center">
-                <button type="button" class="btn btn-secondary rounded-circle users-btn">
+                <button type="button" class="btn btn-secondary rounded-circle btn-sized">
                     <i class="fa-solid fa-user-group"></i>
                 </button>
             </div>
@@ -66,8 +69,10 @@
                         if (userMapped.User.Id != HttpContext.User.Identity.GetUserId())
                         {
                             <li class="d-flex flex-row context-users-list-user"
-                                data-target-id="@userMapped.User.Id"
-                                data-target-username="@userMapped.User.UserName">
+                                data-own-id="@userMapped.User.Id"
+                                data-own-name="@userMapped.User.UserName"
+                                data-online="@userMapped.Online.ToString().ToLower()"
+                                data-unread="false">
                                 <button class="w-100 d-flex user">
                                     <img src="@ResolvePicture(userMapped.Principal)"
                                          alt=""
@@ -122,12 +127,7 @@
             <div class="d-flex chat-middle justify-content-center w-100">
                 <div id="context-messages-parent" class="d-flex flex-column mt-3 w-75 justify-content-center align-items-center">
                     <div id="context-messages" class="d-flex flex-column w-100 align-items-center">
-                        <p class="fw-bolder">
-                            Who are you going to talk to today?
-                        </p>
-                        <p class="fw-bolder">
-                            Please select an user or a group to begin chatting.
-                        </p>
+                        @* Should be empty *@
                     </div>
                 </div>
             </div>
@@ -138,10 +138,10 @@
 
                     <div class="d-flex input-buttons justify-content-between align-items-center">
                         <text-input id="context-input-emote" class="text-input fa-regular fa-smile-beam fa-xl"></text-input>
-                        
+
                         <text-input id="context-input-file" class="text-input fa-solid fa-file-arrow-up fa-xl"></text-input>
                     </div>
-                    
+
                     <div class="d-flex input-end justify-content-end">
                         <button id="context-button-send" class="btn btn-primary rounded w-75">Send</button>
                     </div>
@@ -156,7 +156,7 @@
         <div class="fw-bolder">
             Your chosen file is not a image, only images are accepted (.jpg, .png, .gif, ...)
         </div>
-        
+
         <div>
             Press anywhere to close the popup
         </div>
@@ -167,10 +167,9 @@
     id="context-data"
     data-chat-type=""
     data-target-id=""
-    data-target-username=""
+    data-target-name=""
     data-user-id="@userMappedCurrent.User.Id"
-    data-user-username="@userMappedCurrent.User.UserName"
-    >
+    data-user-username="@userMappedCurrent.User.UserName">
 </context>
 
 <script src="~/js/constants.js"></script>
@@ -179,6 +178,5 @@
 <script src="~/js/handlers/chatHandler.js"></script>
 <script src="~/js/handlers/userConnectionHandler.js"></script>
 <script src="~/js/handlers/emotesHandler.js"></script>
-<script src="~/js/handlers/userListCloseHandler.js"></script>
 <script src="~/js/handlers/userSearchHandler.js"></script>
 <script src="~/js/handlers/imageUploadHandler.js"></script>

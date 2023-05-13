@@ -105,13 +105,13 @@
     border-right-color: #ffffff;
 }
 
-.users-btn {
+.btn-sized {
     height: 50px;
     width: 50px;
 }
 
 .user {
-    height: 55px;
+    height: 50px;
     margin-top: 6px;
     background: rgba(0, 0, 0, 0);
     border-style: none;
@@ -122,7 +122,7 @@
     border-radius: 5px;
 }
 
-.user-active-target {
+.active-target {
     background-color: #cbe3b3;
 }
 

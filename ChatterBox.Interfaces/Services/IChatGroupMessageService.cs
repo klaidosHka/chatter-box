@@ -1,4 +1,5 @@
-﻿using ChatterBox.Interfaces.Entities;
+﻿using ChatterBox.Interfaces.Dto;
+using ChatterBox.Interfaces.Entities;
 
 namespace ChatterBox.Interfaces.Services
 {
@@ -7,6 +8,8 @@ namespace ChatterBox.Interfaces.Services
         IEnumerable<ChatGroupMessage> Get();
 
         IEnumerable<ChatGroupMessage> GetAsNoTracking();
+
+        IEnumerable<GroupMessage> GetMapped(string groupId);
 
         Task ImportAsync(ChatGroupMessage message);
 

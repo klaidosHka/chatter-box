@@ -13,16 +13,19 @@ namespace ChatterBox.Context
 
         private readonly IHelperService _helperService;
         private readonly IChatMessageService _messageService;
+        private readonly IChatGroupMessageService _groupMessageService;
         private readonly UserManager<ChatUser> _userManager;
 
         public ChatHub(
             IHelperService helperService,
             IChatMessageService messageService,
+            IChatGroupMessageService groupMessageService,
             UserManager<ChatUser> userManager
         )
         {
             _helperService = helperService;
             _messageService = messageService;
+            _groupMessageService = groupMessageService;
             _userManager = userManager;
         }
 
@@ -102,6 +105,35 @@ namespace ChatterBox.Context
                 {
                     DateSent = request.DateSent,
                     ReceiverId = request.ReceiverId,
+                    SenderId = request.SenderId,
+                    SenderUserName = _userManager.Users
+                        .AsEnumerable()
+                        .FirstOrDefault(u => u.Id.ToString() == request.SenderId, new ChatUser()).UserName,
+                    SignalrId = request.SignalrId,
+                    Text = request.Text
+                }
+            );
+        }
+
+        public async Task SendGroupMessage(SendGroupMessageRequest request)
+        {
+            await _groupMessageService.ImportAsync(
+                new ChatGroupMessage
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    GroupId = request.GroupId,
+                    SenderId = request.SenderId,
+                    DateSent = request.DateSent,
+                    Text = request.Text
+                }
+            );
+
+            await Clients.Group(request.SignalrId).SendAsync(
+                "ReceiveMessage",
+                new SendGroupMessageResponse
+                {
+                    DateSent = request.DateSent,
+                    GroupId = request.GroupId,
                     SenderId = request.SenderId,
                     SenderUserName = _userManager.Users
                         .AsEnumerable()

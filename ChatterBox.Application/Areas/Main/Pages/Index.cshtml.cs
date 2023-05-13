@@ -1,11 +1,9 @@
-﻿using ChatterBox.Context;
-using ChatterBox.Interfaces.Dto;
+﻿using ChatterBox.Interfaces.Dto;
 using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Services;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace ChatterBox.Application.Areas.Main.Pages
 {
@@ -15,64 +13,41 @@ namespace ChatterBox.Application.Areas.Main.Pages
         private readonly IChatGroupService _chatGroupService;
         private readonly IChatGroupMessageService _chatGroupMessageService;
         private readonly IChatMessageService _chatMessageService;
-        private readonly IHelperService _helperService;
-        private readonly SignInManager<ChatUser> _signInManager;
-        private readonly UserManager<ChatUser> _userManager;
+        private readonly IChatUserService _chatUserService;
 
         public IndexModel(
             IChatGroupService chatGroupService,
             IChatGroupMessageService chatGroupMessageService,
             IChatMessageService chatMessageService,
-            IHelperService helperService,
-            SignInManager<ChatUser> signInManager,
-            UserManager<ChatUser> userManager
+            IChatUserService chatUserService
         )
         {
             _chatGroupService = chatGroupService;
             _chatGroupMessageService = chatGroupMessageService;
             _chatMessageService = chatMessageService;
-            _helperService = helperService;
-            _signInManager = signInManager;
-            _userManager = userManager;
-        }
-
-        public IQueryable<ChatMessage> GetChatMessages()
-        {
-            return _chatMessageService
-                .GetMessagesAsNoTracking()
-                .AsQueryable();
+            _chatUserService = chatUserService;
         }
 
         public async Task<UserMapped> GetCurrentUserAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
-            
-            return new UserMapped
-            {
-                Online = ChatHub.IsOnline(user.Id),
-                Principal = await _signInManager.CreateUserPrincipalAsync(user),
-                User = user
-            };
+            return await _chatUserService.GetMappedAsync(User);
         }
 
-        public IQueryable<ChatGroup> GetGroups(bool joined)
+        public IQueryable<ChatGroup> GetGroupsJoined()
         {
             return _chatGroupService
-                .GetGroupsAsNoTracking()
+                .GetUserGroups(
+                    GetCurrentUserAsync().Result.User.Id
+                )
                 .AsQueryable();
         }
 
         public IQueryable<UserMapped> GetUsers()
         {
-            return _userManager.Users
-                .AsNoTracking()
-                .ToList()
-                .Select(u => new UserMapped
-                {
-                    Online = ChatHub.IsOnline(u.Id),
-                    Principal = _signInManager.CreateUserPrincipalAsync(u).Result,
-                    User = u
-                })
+            return _chatUserService
+                .GetMapped()
+                .OrderBy(u => u.Online)
+                .ThenBy(u => u.User.UserName)
                 .AsQueryable();
         }
 
@@ -84,32 +59,23 @@ namespace ChatterBox.Application.Areas.Main.Pages
                 {
                     Expires = DateTimeOffset.Now.AddMonths(-1)
                 });
-                
-                HttpContext.Response.Redirect("Index");
+
+                HttpContext.Response.Redirect("/Index");
             }
+            else if (!HttpContext.Request.GetDisplayUrl().EndsWith("Index", StringComparison.OrdinalIgnoreCase))
+            {
+                HttpContext.Response.Redirect("/Main/Index");
+            }
+        }
+
+        public JsonResult OnGetGroupMessages(string groupId)
+        {
+            return new JsonResult(_chatGroupMessageService.GetMapped(groupId));
         }
 
         public JsonResult OnGetMessages(string userId, string targetId)
         {
-            return new JsonResult(
-                _chatMessageService
-                    .GetMessagesAsNoTracking()
-                    .Where(m => 
-                        m.SenderId == userId && m.ReceiverId == targetId ||
-                        m.SenderId == targetId && m.ReceiverId == userId
-                    )
-                    .Select(m => new Message
-                    {
-                        DateSent = m.DateSent,
-                        ReceiverId = m.ReceiverId,
-                        SenderId = m.SenderId,
-                        SenderUserName = m.Sender.UserName,
-                        SignalrId = _helperService.ResolveDirectChatId(m.SenderId, m.ReceiverId),
-                        Text = m.Text
-                    })
-                    .OrderBy(m => m.DateSent)
-                    .ToList()
-            );
+            return new JsonResult(_chatMessageService.GetMapped(userId, targetId));
         }
     }
 }

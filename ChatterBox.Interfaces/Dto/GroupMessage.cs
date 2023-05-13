@@ -1,12 +1,12 @@
 ﻿namespace ChatterBox.Interfaces.Dto;
 
-public class Message
+public class GroupMessage
 {
     public DateTime DateSent { get; set; }
 
-    public string ImageLink { get; set; }
+    public string GroupId { get; set; }
 
-    public string ReceiverId { get; set; }
+    public string ImageLink { get; set; }
 
     public string SenderId { get; set; }
 

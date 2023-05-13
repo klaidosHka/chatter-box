@@ -7,34 +7,54 @@ namespace ChatterBox.Services.Services
 {
     public class ChatGroupService : IChatGroupService
     {
+        private readonly IChatGroupRegistrarService _registrarService;
+        private readonly IChatGroupRepository _repository;
 
-        private readonly IChatGroupRepository _groupRepository;
-
-        public ChatGroupService(IChatGroupRepository groupRepository)
+        public ChatGroupService(IChatGroupRegistrarService registrarService, IChatGroupRepository repository)
         {
-            _groupRepository = groupRepository;
+            _registrarService = registrarService;
+            _repository = repository;
         }
 
         public IEnumerable<ChatGroup> GetGroups()
         {
-            return _groupRepository.Get();
+            return _repository.Get();
         }
 
         public IEnumerable<ChatGroup> GetGroupsAsNoTracking()
         {
-            return _groupRepository
+            return _repository
                 .Get()
                 .AsNoTracking();
         }
 
+        public IEnumerable<ChatGroup> GetUserGroups(string userId)
+        {
+            return _registrarService
+                .GetAsNoTracking()
+                .Select(r => new
+                {
+                    r.UserId,
+                    r.GroupId
+                })
+                .Where(r => r.UserId == userId)
+                .Join(
+                    GetGroupsAsNoTracking(),
+                    r => r.GroupId,
+                    g => g.Id,
+                    (r, g) => g
+                )
+                .ToList();
+        }
+
         public async Task ImportAsync(ChatGroup group)
         {
-            await _groupRepository.ImportAsync(group);
+            await _repository.ImportAsync(group);
         }
 
         public async Task ImportAsync(IEnumerable<ChatGroup> groups)
         {
-            await _groupRepository.ImportAsync(groups);
+            await _repository.ImportAsync(groups);
         }
     }
 }

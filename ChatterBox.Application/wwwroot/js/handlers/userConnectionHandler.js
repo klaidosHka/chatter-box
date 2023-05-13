@@ -8,6 +8,10 @@ $(document).ready(() => {
     connection.on('OnDisconnected', userId => handleConnectionStatusChange(userId, false));
 });
 
+function getUser(id) {
+    return $(chatElementIds.LISTED_USER + "[" + targetAttributeIds.ID + "='" + id + "']");
+}
+
 function handleConnectionStatusChange(userId, isOnline) {
     let context = getContextValues();
 
@@ -15,36 +19,51 @@ function handleConnectionStatusChange(userId, isOnline) {
         handleOwnAvatar(userId, isOnline);
     }
 
-    handleListedUserAvatar(userId, isOnline);
+    handleListedUser(userId, isOnline);
+    
+    restructureUsersList();
 }
 
-function handleListedUserAvatar(userId, isOnline) {
-    let avatarImage = $(chatElementIds.LISTED_USER + "[data-target-id='" + userId + "']").find("img");
+function handleListedUser(userId, isOnline) {
+    let user = getUser(userId);
+    
+    user.attr(targetAttributeIds.ONLINE, isOnline);
+    
+    let image = user.find("img");
 
-    avatarImage.removeClass("avatar-online avatar-offline");
+    image.removeClass("avatar-online avatar-offline");
 
-    avatarImage.addClass(isOnline ? "avatar-online" : "avatar-offline");
+    image.addClass(isOnline ? "avatar-online" : "avatar-offline");
 }
 
 function handleOwnAvatar(userId, isOnline) {
-    let avatarImage = $(chatElementIds.OWN_AVATAR);
+    let image = $(chatElementIds.OWN_AVATAR);
 
-    avatarImage.removeClass("avatar-online avatar-offline");
+    image.removeClass("avatar-online avatar-offline");
 
-    avatarImage.addClass(isOnline ? "avatar-online" : "avatar-offline");
+    image.addClass(isOnline ? "avatar-online" : "avatar-offline");
 }
 
 function handleUserAddToDirectChat(userId, targetId) {
     if (targetId === userId || targetId === getContextValues().userId) {
         return;
     }
-    
+
     getConnection()
         .invoke("AddUserToDirectChat", userId, targetId)
         .then(v => {
             directChatsByUserId[targetId] = v;
-        })
-        .catch(e => {
-            console.error(e.toString());
+        });
+}
+
+function handleUserAddToGroupChat(userId, targetId) {
+    if (targetId === userId || targetId === getContextValues().userId) {
+        return;
+    }
+
+    getConnection()
+        .invoke("AddUserToGroupChat", userId, targetId)
+        .then(v => {
+            groupChatsByGroupId[targetId] = v;
         });
 }
