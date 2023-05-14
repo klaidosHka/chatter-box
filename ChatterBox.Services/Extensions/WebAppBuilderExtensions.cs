@@ -51,6 +51,13 @@ namespace ChatterBox.Services.Extensions
             builder.Services.AddSingleton<IChatMessageService, ChatMessageService>();
             builder.Services.AddScoped<IChatUserService, ChatUserService>();
             builder.Services.AddSingleton<IHelperService, HelperService>();
+            builder.Services.AddSingleton<IImageService>(p =>
+            {
+                var clientId = builder.Configuration["Imgur:ClientId"];
+                var clientSecret = builder.Configuration["Imgur:ClientSecret"];
+
+                return new ImageService(clientId, clientSecret);
+            });
 
             // Repositories
             builder.Services.AddSingleton<IChatGroupMessageRepository, ChatGroupMessageRepository>();

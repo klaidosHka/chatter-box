@@ -1,6 +1,4 @@
 ﻿@page
-
-@using System.Security.Claims
 @using Microsoft.AspNet.Identity
 @model ChatterBox.Application.Areas.Main.Pages.IndexModel;
 
@@ -8,18 +6,6 @@
     ViewData["Title"] = "Chat";
 
     var userMappedCurrent = await Model.GetCurrentUserAsync();
-
-    string ResolvePicture(ClaimsPrincipal principal)
-    {
-        var address = principal.FindFirstValue("urn:google:picture");
-
-        if (String.IsNullOrEmpty(address))
-        {
-            return "/img/profile-circle.svg";
-        }
-
-        return address;
-    }
 }
 
 <link href="~/css/main.css" rel="stylesheet"/>
@@ -36,20 +22,22 @@
             <div class="group-middle">
                 @foreach (var group in Model.GetGroupsJoined())
                 {
-                    <div class="group align-column-center">
-                        <button type="button"
-                                class="btn btn-secondary rounded-circle btn-sized"
-                                data-own-id="@group.Id"
-                                data-own-name="@group.Name">
+                    <div class="d-flex group-icon justify-content-center align-items-center position-relative context-groups-list-group"
+                         data-own-id="@group.Id"
+                         data-own-name="@group.Name">
+                        <button type="button" class="btn btn-light rounded-circle btn-sized">
                             <i class="fa-solid fa-layer-group"></i>
                         </button>
-                        @group.Name
+
+                        <div class="position-absolute listed-group-name">
+                            @group.Name
+                        </div>
                     </div>
                 }
             </div>
 
             <div class="group-bottom align-center">
-                <button type="button" class="btn btn-secondary rounded-circle btn-sized">
+                <button id="context-groups-button" type="button" class="btn btn-secondary rounded-circle btn-sized">
                     <i class="fa-solid fa-user-group"></i>
                 </button>
             </div>
@@ -74,7 +62,7 @@
                                 data-online="@userMapped.Online.ToString().ToLower()"
                                 data-unread="false">
                                 <button class="w-100 d-flex user">
-                                    <img src="@ResolvePicture(userMapped.Principal)"
+                                    <img src="@userMapped.AvatarLink"
                                          alt=""
                                          class="rounded-circle avatar @(userMapped.Online ? "avatar-online" : "avatar-offline")">
 
@@ -93,7 +81,7 @@
             <div class="align-center users-bottom">
                 <div class="d-flex w-75">
                     <img id="context-own-avatar"
-                         src="@ResolvePicture(userMappedCurrent.Principal)"
+                         src="@userMappedCurrent.AvatarLink"
                          alt=""
                          class="rounded-circle avatar @(userMappedCurrent.Online ? "avatar-online" : "avatar-offline")">
 
@@ -151,7 +139,7 @@
     </div>
 </div>
 
-<dialog id="wrong-input-file-dialog">
+<dialog id="wrong-input-file-dialog" class="dialog-text-error">
     <div class="d-flex flex-column justify-content-center align-items-center">
         <div class="fw-bolder">
             Your chosen file is not a image, only images are accepted (.jpg, .png, .gif, ...)
@@ -160,6 +148,60 @@
         <div>
             Press anywhere to close the popup
         </div>
+    </div>
+</dialog>
+
+<dialog id="groups-dialog" class="group-container w-75">
+    <div class="row h-100 position-relative">
+        <div class="join-group w-50 text-center">
+            <div class="join-header d-flex align-items-center justify-content-center">
+                All groups
+            </div>
+
+            <div class="join-group-list d-flex flex-column align-items-center w-100">
+                @{
+                    foreach (var group in Model.GetGroups())
+                    {
+                        <div class="group d-flex flex-row w-75">
+                            <div class="group-name d-flex flex-column justify-content-center w-100">@group.Name</div>
+
+                            <button
+                                action-create-group
+                                data-group-id="@group.Id"
+                                class="group-btn group-@(group.Joined ? "joined" : "join")-btn">
+                                @(group.Joined ? "Joined" : "Join")
+                            </button>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="w-50">
+            <div class="create-header text-center d-flex align-items-center justify-content-center">
+                Create your group
+            </div>
+
+            <div class="create-group-container mt-3 w-100 d-flex flex-column align-items-center justify-content-around">
+                <div class="input-group input-group-sm mb-3 w-75">
+                    <input
+                        id="group-creation-name"
+                        type="text"
+                        class="form-control"
+                        aria-label="Small"
+                        aria-describedby="inputGroup-sizing-sm"
+                        placeholder="Group name..."/>
+                </div>
+
+                <div class="w-100 d-flex flex-column align-items-center justify-content-center">
+                    <button id="group-creation-submit" type="button" class="btn btn-success">Create</button>
+
+                    <span class="mt-2 text-danger" id="group-creation-submit-info"></span>
+                </div>
+            </div>
+        </div>
+
+        <button id="context-groups-close" class="btn btn-close position-absolute rounded-circle"></button>
     </div>
 </dialog>
 
@@ -176,6 +218,7 @@
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/handlers/signalRHandler.js"></script>
 <script src="~/js/handlers/chatHandler.js"></script>
+<script src="~/js/handlers/groupsHandler.js"></script>
 <script src="~/js/handlers/userConnectionHandler.js"></script>
 <script src="~/js/handlers/emotesHandler.js"></script>
 <script src="~/js/handlers/userSearchHandler.js"></script>

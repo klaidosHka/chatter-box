@@ -42,6 +42,13 @@ namespace ChatterBox.Application.Areas.Main.Pages
                 .AsQueryable();
         }
 
+        public IQueryable<GroupMapped> GetGroups()
+        {
+            return _chatGroupService
+                .GetMapped(GetCurrentUserAsync().Result.User.Id)
+                .AsQueryable();
+        }
+
         public IQueryable<UserMapped> GetUsers()
         {
             return _chatUserService
@@ -73,9 +80,54 @@ namespace ChatterBox.Application.Areas.Main.Pages
             return new JsonResult(_chatGroupMessageService.GetMapped(groupId));
         }
 
+        public JsonResult OnGetGroupUsers(string groupId)
+        {
+            if (String.IsNullOrEmpty(groupId))
+            {
+                return new JsonResult(
+                    _chatUserService
+                        .GetMapped()
+                        .Select(u => new UserMappedBasic
+                        {
+                            AvatarLink = u.AvatarLink,
+                            Id = u.User.Id,
+                            Online = u.Online,
+                            UserName = u.User.UserName
+                        })
+                        .ToList()
+                );
+            }
+
+            return new JsonResult(
+                _chatUserService
+                    .GetWithinGroup(groupId)
+                    .Select(u => new UserMappedBasic
+                    {
+                        AvatarLink = u.AvatarLink,
+                        Id = u.User.Id,
+                        Online = u.Online,
+                        UserName = u.User.UserName
+                    })
+                    .ToList()
+            );
+        }
+
         public JsonResult OnGetMessages(string userId, string targetId)
         {
             return new JsonResult(_chatMessageService.GetMapped(userId, targetId));
+        }
+
+        public IActionResult OnPostCreateGroup(string groupName)
+        {
+            var request = new CreateGroupRequest
+            {
+                UserId = GetCurrentUserAsync().Result.User.Id,
+                GroupName = groupName
+            };
+
+            var response = _chatGroupService.CreateAsync(request).Result;
+
+            return StatusCode(response.Success ? 200 : 400, response);
         }
     }
 }

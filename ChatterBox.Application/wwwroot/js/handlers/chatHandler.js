@@ -21,16 +21,14 @@ $(document).ready(() => {
         handleButtonSend();
     });
 
-    $(chatElementIds.LISTED_GROUP).click(e => {
-        !handleContextSwitch($(e.currentTarget), chatTypeIds.GROUP);
-    });
-
-    $(chatElementIds.LISTED_USER).click(e => {
+    $(document).on('click', chatElementIds.LISTED_USER, e => {
         handleContextSwitch($(e.currentTarget), chatTypeIds.DIRECT);
     });
 
     $(chatElementIds.HOME_BUTTON).click(e => {
         handleChatViewChange(false);
+
+        updateUsersForGroup(null);
     });
 });
 
@@ -38,11 +36,11 @@ function getContextValues() {
     let contextObject = $(chatElementIds.CONTEXT_DATA);
 
     return {
-        chatType: contextObject.attr(contextAttributeIds.CHAT_TYPE),
-        targetId: contextObject.attr(contextAttributeIds.TARGET_ID),
-        targetName: contextObject.attr(contextAttributeIds.TARGET_NAME),
-        userId: contextObject.attr(contextAttributeIds.USER_ID),
-        userName: contextObject.attr(contextAttributeIds.USER_NAME)
+        chatType: contextObject.attr(contextAttributes.CHAT_TYPE),
+        targetId: contextObject.attr(contextAttributes.TARGET_ID),
+        targetName: contextObject.attr(contextAttributes.TARGET_NAME),
+        userId: contextObject.attr(contextAttributes.USER_ID),
+        userName: contextObject.attr(contextAttributes.USER_NAME)
     }
 }
 
@@ -61,21 +59,21 @@ function handleButtonSend() {
     input.val(null);
 }
 
-function handleContextSwitch(target, chatType) {
-    let id = target.attr(targetAttributeIds.ID);
+function handleContextSwitch(target, chatType) {    
+    let id = target.attr(targetAttributes.ID);
     let context = getContextValues();
 
     if (id === context.targetId) {
         return;
     }
 
-    let name = target.attr(targetAttributeIds.NAME);
+    let name = target.attr(targetAttributes.NAME);
 
     removeActiveTarget();
 
     target.addClass("active-target");
 
-    target.attr(targetAttributeIds.UNREAD, false);
+    target.attr(targetAttributes.UNREAD, false);
 
     context.targetId = id;
     context.targetName = name;
@@ -111,10 +109,10 @@ function handleChatViewChange(enabled) {
         inputFile.fadeIn(300);
 
         targetName.fadeOut(150, () =>
-                targetName
-                    .text(context.targetName)
-                    .fadeIn(150)
-            );
+            targetName
+                .text(context.targetName)
+                .fadeIn(150)
+        );
 
         if (messages.children().length === 0) {
             messages.fadeIn(300, () => fillMessages());
@@ -223,7 +221,7 @@ function handleMessageReceive(request) {
     ) {
         let target = getUser(request.senderId);
 
-        target.attr(targetAttributeIds.UNREAD, true);
+        target.attr(targetAttributes.UNREAD, true);
 
         // add unread badge?
 
@@ -273,6 +271,7 @@ function handleMessageReceive(request) {
 function handleMessageSend(message) {
     let context = getContextValues();
     let request;
+    let formData = new FormData();
 
     if (context.chatType == chatTypeIds.DIRECT) {
         request = {
@@ -292,7 +291,13 @@ function handleMessageSend(message) {
         };
     }
 
-    getConnection().invoke(context.chatType == chatTypeIds.DIRECT ? "SendMessage" : "SendGroupMessage", request);
+    if (image) {
+        formData.append("file", image);
+    }
+
+    formData.append("request", JSON.stringify(request));
+
+    getConnection().invoke(context.chatType == chatTypeIds.DIRECT ? "SendMessage" : "SendGroupMessage", formData);
 }
 
 function removeActiveTarget() {
@@ -309,10 +314,10 @@ function restructureUsersList() {
     let users = $(chatElementIds.LISTED_USER);
 
     users.sort((a, b) => {
-        let nameA = $(a).attr(targetAttributeIds.NAME);
-        let nameB = $(b).attr(targetAttributeIds.NAME);
-        let onlineA = $(a).attr(targetAttributeIds.ONLINE) === 'true';
-        let onlineB = $(b).attr(targetAttributeIds.ONLINE) === 'true';
+        let nameA = $(a).attr(targetAttributes.NAME);
+        let nameB = $(b).attr(targetAttributes.NAME);
+        let onlineA = $(a).attr(targetAttributes.ONLINE) === 'true';
+        let onlineB = $(b).attr(targetAttributes.ONLINE) === 'true';
 
         if (onlineA && !onlineB) {
             return -1;
@@ -341,13 +346,65 @@ function restructureUsersList() {
 function setContextValues(context) {
     let contextObject = $(chatElementIds.CONTEXT_DATA);
 
-    contextObject.attr(contextAttributeIds.CHAT_TYPE, context.chatType);
+    contextObject.attr(contextAttributes.CHAT_TYPE, context.chatType);
 
-    contextObject.attr(contextAttributeIds.TARGET_ID, context.targetId);
+    contextObject.attr(contextAttributes.TARGET_ID, context.targetId);
 
-    contextObject.attr(contextAttributeIds.TARGET_NAME, context.targetName);
+    contextObject.attr(contextAttributes.TARGET_NAME, context.targetName);
 
-    contextObject.attr(contextAttributeIds.USER_ID, context.userId);
+    contextObject.attr(contextAttributes.USER_ID, context.userId);
 
-    contextObject.attr(contextAttributeIds.USER_NAME, context.userName);
+    contextObject.attr(contextAttributes.USER_NAME, context.userName);
+}
+
+function updateUsersForGroup(groupId) {
+    $
+        .ajax({
+            url: '/Main/Index?handler=GroupUsers',
+            method: 'GET',
+            data: {
+                groupId: groupId
+            },
+            dataType: 'json'
+        })
+        .done(response => {
+            let users = $(chatElementIds.USERS_LIST);
+            let unreadValues = {};
+
+            users.find(chatElementIds.LISTED_USER).each((i, u) => {
+                unreadValues[$(u).attr(targetAttributes.ID)] = $(u).attr(targetAttributes.UNREAD);
+            });
+
+            users.find(chatElementIds.LISTED_USER).remove();
+
+            $.each(response, (i, u) => {
+                if (u.id === $(chatElementIds.CONTEXT_DATA).attr(contextAttributes.USER_ID)) {
+                    return;
+                }
+
+                let oldUnread = unreadValues[u.id];
+
+                $('<li class="d-flex flex-row context-users-list-user"></li>')
+                    .attr('data-own-id', u.id)
+                    .attr('data-own-name', u.userName)
+                    .attr('data-online', u.online.toString().toLowerCase())
+                    .attr('data-unread', oldUnread)
+                    .append($('<button class="w-100 d-flex user"></button>')
+                        .append($('<img class="rounded-circle avatar ' + (u.online == true ? "avatar-online" : "avatar-offline") + '">')
+                            .attr('src', u.avatarLink)
+                            .attr('alt', '')
+                        )
+                        .append($('<div class="d-flex flex-column justify-content-center"></div>')
+                            .append($('<div class="justify-content-start"></div>')
+                                .text(u.userName))
+                        )
+                    )
+                    .appendTo(users);
+            });
+
+            restructureUsersList();
+        })
+        .fail(xhr => {
+            console.log(xhr.status);
+        });
 }

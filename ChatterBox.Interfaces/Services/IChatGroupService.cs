@@ -1,12 +1,17 @@
-﻿using ChatterBox.Interfaces.Entities;
+﻿using ChatterBox.Interfaces.Dto;
+using ChatterBox.Interfaces.Entities;
 
 namespace ChatterBox.Interfaces.Services
 {
     public interface IChatGroupService
     {
-        IEnumerable<ChatGroup> GetGroups();
+        public Task<CreateGroupResponse> CreateAsync(CreateGroupRequest request);
+        
+        IEnumerable<ChatGroup> Get();
 
-        IEnumerable<ChatGroup> GetGroupsAsNoTracking();
+        IEnumerable<ChatGroup> GetAsNoTracking();
+
+        IEnumerable<GroupMapped> GetMapped(string userId);
 
         IEnumerable<ChatGroup> GetUserGroups(string userId);
 

@@ -10,5 +10,7 @@ public interface IChatUserService
 
     public IEnumerable<UserMapped> GetMapped();
 
+    public IEnumerable<UserMapped> GetWithinGroup(string groupId);
+
     public Task<UserMapped> GetMappedAsync(ClaimsPrincipal principal);
 }

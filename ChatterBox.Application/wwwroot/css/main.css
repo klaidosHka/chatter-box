@@ -87,9 +87,13 @@
     border-bottom-color: #ffffff;
 }
 
-.group {
+.group-icon {
     margin-top: 13px;
     margin-left: 5px;
+}
+
+.listed-group-name {
+    top: 65%;
 }
 
 .group-bottom {
@@ -283,18 +287,112 @@
     color: forestgreen;
 }
 
-dialog {
+#wrong-input-file-dialog {
     border: none;
     border-radius: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-dialog div {
+#wrong-input-file-dialog::backdrop {
+    background: black;
+    opacity: 0.45;
+    overflow: hidden;
+}
+
+.dialog-text-error {
     color: rgba(255, 10, 50, 0.9);
 }
 
-dialog::backdrop {
+#groups-dialog {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#groups-dialog::backdrop {
     background: black;
-    opacity: 0.3;
+    opacity: 0.45;
     overflow: hidden;
+}
+
+.group-container {
+    height: 50%;
+    background-color: #d9e5cd;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    border-color: #ffffff;
+}
+
+.join-group {
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: #ffffff;
+}
+
+.join-header {
+    height: 15%;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #ffffff;
+    font-size: 25px;
+}
+
+.create-header {
+    height: 15%;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #ffffff;
+    font-size: 25px;
+}
+
+.create-group-container {
+    height: 85%;
+}
+
+.join-group-list {
+    height: 85%;
+    overflow: scroll;
+}
+
+.group {
+    height: 40px;
+    margin-top: 10px;
+}
+
+.group-name {
+    height: 38px;
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+    border-color: #CED4DA;
+    text-align: left;
+    padding-left: 5px;
+}
+
+.group-btn {
+    width: 68px;
+    height: 38px;
+    border-style: solid;
+    border-width: 1px;
+    border-bottom-right-radius: 3px;
+    border-top-right-radius: 3px;
+    border-left-style: none;
+    border-color: #CED4DA;
+    color: white;
+}
+
+.group-joined-btn {
+    background-color: gray;
+}
+
+.group-join-btn {
+    background-color: #198754;
+}
+
+#context-groups-close {
+    right: 10px;
+    top: 10px;
 }

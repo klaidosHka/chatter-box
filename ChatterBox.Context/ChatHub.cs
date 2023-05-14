@@ -1,8 +1,10 @@
 ﻿using ChatterBox.Interfaces.Dto;
 using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 
 namespace ChatterBox.Context
 {
@@ -12,18 +14,21 @@ namespace ChatterBox.Context
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         private readonly IHelperService _helperService;
+        private readonly IImageService _imageService;
         private readonly IChatMessageService _messageService;
         private readonly IChatGroupMessageService _groupMessageService;
         private readonly UserManager<ChatUser> _userManager;
 
         public ChatHub(
             IHelperService helperService,
+            IImageService imageService,
             IChatMessageService messageService,
             IChatGroupMessageService groupMessageService,
             UserManager<ChatUser> userManager
         )
         {
             _helperService = helperService;
+            _imageService = imageService;
             _messageService = messageService;
             _groupMessageService = groupMessageService;
             _userManager = userManager;
@@ -86,12 +91,20 @@ namespace ChatterBox.Context
             await Clients.All.SendAsync("OnDisconnected", Context.UserIdentifier);
         }
 
-        public async Task SendMessage(SendMessageRequest request)
+        public async Task SendMessage(IFormCollection form)
         {
+            var request = JsonConvert.DeserializeObject<SendMessageRequest>(form["request"].ToString());
+            var image = (File: form.Files.FirstOrDefault(), Link: (string?)string.Empty);
+
+            image.Link = image.File is not null
+                ? await _imageService.UploadAsync(image.File.OpenReadStream(), image.File.FileName)
+                : null;
+
             await _messageService.ImportAsync(
                 new ChatMessage
                 {
                     Id = Guid.NewGuid().ToString(),
+                    ImageLink = image.Link,
                     ReceiverId = request.ReceiverId,
                     SenderId = request.SenderId,
                     DateSent = request.DateSent,
@@ -104,6 +117,7 @@ namespace ChatterBox.Context
                 new SendMessageResponse
                 {
                     DateSent = request.DateSent,
+                    ImageLink = image.Link,
                     ReceiverId = request.ReceiverId,
                     SenderId = request.SenderId,
                     SenderUserName = _userManager.Users
@@ -115,12 +129,20 @@ namespace ChatterBox.Context
             );
         }
 
-        public async Task SendGroupMessage(SendGroupMessageRequest request)
+        public async Task SendGroupMessage(IFormCollection form)
         {
+            var request = JsonConvert.DeserializeObject<SendGroupMessageRequest>(form["request"].ToString());
+            var image = (File: form.Files.FirstOrDefault(), Link: (string?)string.Empty);
+
+            image.Link = image.File is not null
+                ? await _imageService.UploadAsync(image.File.OpenReadStream(), image.File.FileName)
+                : null;
+
             await _groupMessageService.ImportAsync(
                 new ChatGroupMessage
                 {
                     Id = Guid.NewGuid().ToString(),
+                    ImageLink = image.Link,
                     GroupId = request.GroupId,
                     SenderId = request.SenderId,
                     DateSent = request.DateSent,
@@ -134,6 +156,7 @@ namespace ChatterBox.Context
                 {
                     DateSent = request.DateSent,
                     GroupId = request.GroupId,
+                    ImageLink = image.Link,
                     SenderId = request.SenderId,
                     SenderUserName = _userManager.Users
                         .AsEnumerable()

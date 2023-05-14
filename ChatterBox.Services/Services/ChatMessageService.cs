@@ -29,7 +29,7 @@ namespace ChatterBox.Services.Services
                 .AsNoTracking();
         }
 
-        public IEnumerable<Message> GetMapped(string userIdFirst, string userIdSecond)
+        public IEnumerable<MessageMapped> GetMapped(string userIdFirst, string userIdSecond)
         {
             var signalrId = _helperService.ResolveDirectChatId(userIdFirst, userIdSecond);
 
@@ -38,7 +38,7 @@ namespace ChatterBox.Services.Services
                     m.SenderId == userIdFirst && m.ReceiverId == userIdSecond ||
                     m.SenderId == userIdSecond && m.ReceiverId == userIdFirst
                 )
-                .Select(m => new Message
+                .Select(m => new MessageMapped
                 {
                     DateSent = m.DateSent,
                     ImageLink = m.ImageLink,

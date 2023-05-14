@@ -23,7 +23,8 @@ namespace ChatterBox.Services.Services
         {
             return _registrarRepository
                 .Get()
-                .AsNoTracking();
+                .AsNoTracking()
+                .Include(r => r.User);
         }
 
         public async Task ImportAsync(ChatGroupRegistrar registrar)

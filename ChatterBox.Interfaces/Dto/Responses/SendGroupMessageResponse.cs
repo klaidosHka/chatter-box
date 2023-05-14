@@ -6,6 +6,8 @@ public class SendGroupMessageResponse
 
     public string GroupId { get; set; }
 
+    public string ImageLink { get; set; }
+
     public string SenderId { get; set; }
 
     public string SenderUserName { get; set; }

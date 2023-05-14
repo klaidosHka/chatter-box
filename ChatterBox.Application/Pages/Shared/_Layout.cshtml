@@ -1,6 +1,11 @@
-﻿@using ChatterBox.Interfaces.Entities;
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using ChatterBox.Interfaces.Services
 
-@inject SignInManager<ChatUser> SignInManager;
+@inject IChatUserService ChatUserService;
+
+@{
+    var currentUser = await ChatUserService.GetMappedAsync(User);
+}
 
 <!DOCTYPE html>
 
@@ -26,19 +31,19 @@
         <div class="d-flex col-md-6 m-auto justify-content-start align-items-center">
             <!-- Chat button -->
             <button class="btn btn-border-0">
-                <a href="~/Index" class="fa-solid fa-comment fa-xl text-decoration-none">
+                <a href="/Index" class="fa-solid fa-comment fa-xl text-decoration-none">
                     <span class="text-white fw-normal text-capitalize">Chat</span>
                 </a>
             </button>
         </div>
 
         <div class="d-flex col-md-6 m-auto justify-content-end align-items-center">
-            @if (SignInManager?.Context?.User.Identity?.IsAuthenticated ?? false)
+            @if (currentUser?.Online ?? false)
             {
                 <div class="dropdown">
                     <a href="~/Identity/Account/Manage" class="dropdown-toggle text-decoration-none" role="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="text-white fw-normal">@SignInManager.Context.User.Identity.Name</span>
-                        <img src="~/img/profile-circle.svg" alt="avatar" />
+                        <span class="text-white fw-normal">@currentUser.User.UserName</span>
+                        <img class="rounded-circle bg-white" src="@currentUser.AvatarLink" alt=""/>
                     </a>
                     
                     <div class="dropdown-menu bg-dark w-100" style="margin-right: 10px" aria-labelledby="userDropdown">

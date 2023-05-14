@@ -9,7 +9,7 @@ $(document).ready(() => {
 });
 
 function getUser(id) {
-    return $(chatElementIds.LISTED_USER + "[" + targetAttributeIds.ID + "='" + id + "']");
+    return $(chatElementIds.LISTED_USER + "[" + targetAttributes.ID + "='" + id + "']");
 }
 
 function handleConnectionStatusChange(userId, isOnline) {
@@ -27,7 +27,7 @@ function handleConnectionStatusChange(userId, isOnline) {
 function handleListedUser(userId, isOnline) {
     let user = getUser(userId);
     
-    user.attr(targetAttributeIds.ONLINE, isOnline);
+    user.attr(targetAttributes.ONLINE, isOnline);
     
     let image = user.find("img");
 

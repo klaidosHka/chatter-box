@@ -9,7 +9,7 @@ namespace ChatterBox.Interfaces.Services
 
         IEnumerable<ChatGroupMessage> GetAsNoTracking();
 
-        IEnumerable<GroupMessage> GetMapped(string groupId);
+        IEnumerable<GroupMessageMapped> GetMapped(string groupId);
 
         Task ImportAsync(ChatGroupMessage message);
 

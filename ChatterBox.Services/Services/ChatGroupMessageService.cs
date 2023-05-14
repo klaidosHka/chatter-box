@@ -30,13 +30,13 @@ namespace ChatterBox.Services.Services
                 .AsNoTracking();
         }
 
-        public IEnumerable<GroupMessage> GetMapped(string groupId)
+        public IEnumerable<GroupMessageMapped> GetMapped(string groupId)
         {
             var signalrId = _helperService.ResolveGroupChatId(groupId);
 
             return GetAsNoTracking()
                 .Where(m => m.GroupId == groupId)
-                .Select(m => new GroupMessage
+                .Select(m => new GroupMessageMapped
                 {
                     DateSent = m.DateSent,
                     GroupId = m.GroupId,

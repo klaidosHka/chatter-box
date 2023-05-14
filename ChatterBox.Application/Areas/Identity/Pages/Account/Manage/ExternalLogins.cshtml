@@ -5,15 +5,16 @@
     ViewData["ActivePage"] = ManageNavPages.ExternalLogins;
 }
 
+<h3 class="align-center">@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
 @if (Model.CurrentLogins?.Count > 0)
 {
-    <h3>Registered Logins</h3>
-    <table class="table">
+    <h3 class="align-center">Registered Logins</h3>
+    <table class="d-flex table justify-content-center align-items-center">
         <tbody>
             @foreach (var login in Model.CurrentLogins)
             {
-                <tr>
+                <tr class="justify-content-center align-items-center">
                     <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
                     <td>
                         @if (Model.ShowRemoveButton)
@@ -26,10 +27,6 @@
                                 </div>
                             </form>
                         }
-                        else
-                        {
-                            @: &nbsp;
-                        }
                     </td>
                 </tr>
             }
@@ -38,9 +35,9 @@
 }
 @if (Model.OtherLogins?.Count > 0)
 {
-    <h4>Add another service to log in.</h4>
+    <h4 class="align-center">Add another service to log in.</h4>
     <hr />
-    <form id="link-login-form" asp-page-handler="LinkLogin" method="post" class="form-horizontal">
+    <form id="link-login-form" asp-page-handler="LinkLogin" method="post" class="d-flex form-horizontal justify-content-center align-items-center">
         <div id="socialLoginList">
             <p>
                 @foreach (var provider in Model.OtherLogins)

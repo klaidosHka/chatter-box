@@ -4,6 +4,8 @@ public class SendMessageResponse
 {
     public DateTime DateSent { get; set; }
 
+    public string ImageLink { get; set; }
+
     public string ReceiverId { get; set; }
 
     public string SenderId { get; set; }
