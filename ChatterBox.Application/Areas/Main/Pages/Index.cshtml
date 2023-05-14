@@ -4,11 +4,10 @@
 
 @{
     ViewData["Title"] = "Chat";
-
-    var userMappedCurrent = await Model.GetCurrentUserAsync();
 }
 
 <link href="~/css/main.css" rel="stylesheet"/>
+<link href="~/lib/magnific-popup/magnific-popup.css" rel="stylesheet"/>
 
 <div class="d-flex justify-content-center w-100 h-100 extra-chat-margin">
     <div class="d-flex chat-container">
@@ -19,12 +18,14 @@
                 </button>
             </div>
 
-            <div class="group-middle">
+            <div class="group-middle overflow-hidden">
                 @foreach (var group in Model.GetGroupsJoined())
                 {
                     <div class="d-flex group-icon justify-content-center align-items-center position-relative context-groups-list-group"
                          data-own-id="@group.Id"
-                         data-own-name="@group.Name">
+                         data-own-owner-id="@group.OwnerId"
+                         data-own-name="@group.Name"
+                         data-unread="false">
                         <button type="button" class="btn btn-light rounded-circle btn-sized">
                             <i class="fa-solid fa-layer-group"></i>
                         </button>
@@ -81,13 +82,13 @@
             <div class="align-center users-bottom">
                 <div class="d-flex w-75">
                     <img id="context-own-avatar"
-                         src="@userMappedCurrent.AvatarLink"
+                         src="@Model.CurrentUser.AvatarLink"
                          alt=""
-                         class="rounded-circle avatar @(userMappedCurrent.Online ? "avatar-online" : "avatar-offline")">
+                         class="rounded-circle avatar @(Model.CurrentUser.Online ? "avatar-online" : "avatar-offline")">
 
                     <div class="d-flex flex-column justify-content-center">
                         <div class="justify-content-start">
-                            @userMappedCurrent.User.UserName
+                            @Model.CurrentUser.User.UserName
                         </div>
                     </div>
                 </div>
@@ -102,13 +103,17 @@
 
         <div class="p-0 chat">
             <div class="chat-top align-center">
-                <div class="d-flex flex-row m-2 justify-content-center align-items-center">
-                    <div class="d-flex flex-column justify-content-center align-items-center">
+                <div class="d-flex flex-row m-2 justify-content-center align-items-center w-100">
+                    <div class="d-flex justify-content-center align-items-center position-relative">
                         <div class="justify-content-start">
                             <span id="context-target-name" class="fw-bolder">
                             </span>
                         </div>
                     </div>
+
+                    <button id="group-more-button" class="btn btn-secondary rounded-circle btn-sized position-absolute">
+                        <item class="fa-solid fa-ellipsis fa-xl"></item>
+                    </button>
                 </div>
             </div>
 
@@ -160,13 +165,13 @@
 
             <div class="join-group-list d-flex flex-column align-items-center w-100">
                 @{
+                    // need to update the list dynamically <<<<
                     foreach (var group in Model.GetGroups())
                     {
                         <div class="group d-flex flex-row w-75">
                             <div class="group-name d-flex flex-column justify-content-center w-100">@group.Name</div>
 
                             <button
-                                action-create-group
                                 data-group-id="@group.Id"
                                 class="group-btn group-@(group.Joined ? "joined" : "join")-btn">
                                 @(group.Joined ? "Joined" : "Join")
@@ -205,13 +210,59 @@
     </div>
 </dialog>
 
+<dialog id="group-more-dialog" class="position-relative w-50">
+    <div class="d-flex container justify-content-center align-items-center">
+        <div class="d-flex flex-row w-100">
+            <div id="group-more-left-outer-container" class="d-flex col-6 col-md-6 flex-column justify-content-center align-items-center">
+                <h4 class="align-center">
+                    Group Name
+                </h4>
+
+                <div class="flex-column w-100">
+                    <div id="group-more-left-container" class="d-flex w-100 justify-content-center align-items-center">
+                        <div class="input-group input-group-sm w-50">
+                            <input
+                                id="group-change-name"
+                                class="input form-control rounded"
+                                aria-label="Small"
+                                aria-describedby="inputGroup-sizing-sm"
+                                type="text"
+                                value=""
+                                placeholder="Group name..."/>
+                        </div>
+
+                        <button id="group-change-name-button" class="btn btn-sm btn-primary m-2 w-50">Change Name</button>
+                    </div>
+
+                    <span id="group-more-change-name-info" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="d-flex col-6 col-md-6 flex-column justify-content-center align-items-center">
+                <h4 id="header-of-group-more-leave-delete" class="align-center">
+                    Leave/Delete Group
+                </h4>
+
+                <div id="group-more-right-container" class="d-flex w-100 justify-content-center align-items-center">
+                    <button id="group-leave-button" class="btn btn-sm btn-danger m-2 w-75">Leave</button>
+
+                    <button id="group-delete-button" class="btn btn-sm btn-danger m-2 w-75">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="group-more-dialog-close" class="btn btn-close position-absolute"></button>
+</dialog>
+
 <context
     id="context-data"
     data-chat-type=""
+    data-target-owner-id=""
     data-target-id=""
     data-target-name=""
-    data-user-id="@userMappedCurrent.User.Id"
-    data-user-username="@userMappedCurrent.User.UserName">
+    data-user-id="@Model.CurrentUser.User.Id"
+    data-user-username="@Model.CurrentUser.User.UserName">
 </context>
 
 <script src="~/js/constants.js"></script>
@@ -222,4 +273,5 @@
 <script src="~/js/handlers/userConnectionHandler.js"></script>
 <script src="~/js/handlers/emotesHandler.js"></script>
 <script src="~/js/handlers/userSearchHandler.js"></script>
-<script src="~/js/handlers/imageUploadHandler.js"></script>
+<script src="~/js/handlers/imagesHandler.js"></script>
+<script src="~/lib/magnific-popup/jquery.magnific-popup.min.js"></script>

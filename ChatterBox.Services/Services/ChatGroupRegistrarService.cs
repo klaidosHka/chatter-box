@@ -36,5 +36,36 @@ namespace ChatterBox.Services.Services
         {
             await _registrarRepository.ImportAsync(registrars);
         }
+
+        public async Task<bool> JoinGroupAsync(string userId, string groupId)
+        {
+            if (GetAsNoTracking().Any(r => r.GroupId == groupId && r.UserId == userId))
+            {
+                return false;
+            }
+
+            await ImportAsync(new ChatGroupRegistrar
+            {
+                Id = Guid.NewGuid().ToString(),
+                GroupId = groupId,
+                UserId = userId
+            });
+
+            return true;
+        }
+
+        public async Task<bool> LeaveGroupAsync(string userId, string groupId)
+        {
+            var group = GetAsNoTracking().FirstOrDefault(r => r.GroupId == groupId && r.UserId == userId);
+            
+            if (group is null)
+            {
+                return false;
+            }
+
+            await _registrarRepository.RemoveAsync(group);
+
+            return true;
+        }
     }
 }

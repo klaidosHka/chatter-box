@@ -12,6 +12,10 @@ function getUser(id) {
     return $(chatElementIds.LISTED_USER + "[" + targetAttributes.ID + "='" + id + "']");
 }
 
+function getGroup(id) {
+    return $(chatElementIds.LISTED_GROUP + "[" + targetAttributes.ID + "='" + id + "']");
+}
+
 function handleConnectionStatusChange(userId, isOnline) {
     let context = getContextValues();
 
@@ -20,15 +24,15 @@ function handleConnectionStatusChange(userId, isOnline) {
     }
 
     handleListedUser(userId, isOnline);
-    
+
     restructureUsersList();
 }
 
 function handleListedUser(userId, isOnline) {
     let user = getUser(userId);
-    
+
     user.attr(targetAttributes.ONLINE, isOnline);
-    
+
     let image = user.find("img");
 
     image.removeClass("avatar-online avatar-offline");

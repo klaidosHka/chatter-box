@@ -396,3 +396,47 @@
     right: 10px;
     top: 10px;
 }
+
+#group-more-button {
+    right: 11%;
+}
+
+#group-more-dialog {
+    background-color: #d9e5cd;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#group-more-dialog::backdrop {
+    background: black;
+    opacity: 0.45;
+    overflow: hidden;
+}
+
+#group-more-dialog-close {
+    right: 10px;
+    top: 10px;
+}
+
+#group-more-left-outer-container {
+    border-right: 1px solid white;
+}
+
+#group-more-left-container {
+    border-top: 1px solid white;
+}
+
+#group-more-right-container {
+    border-top: 1px solid white;
+}
+
+.message-img {
+    max-width: 200px;
+    max-height: 200px;
+    overflow: hidden;
+}
+
+.message-img:hover {
+    cursor: pointer;
+}

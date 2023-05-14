@@ -68,3 +68,7 @@ html {
 .dropdown-item:hover {
     color: black;
 }
+
+.justify-text {
+    text-align: justify;
+}

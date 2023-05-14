@@ -9,5 +9,7 @@ namespace ChatterBox.Interfaces.Repositories
         Task ImportAsync(ChatGroupRegistrar group);
 
         Task ImportAsync(IEnumerable<ChatGroupRegistrar> groups);
+
+        Task RemoveAsync(ChatGroupRegistrar group);
     }
 }

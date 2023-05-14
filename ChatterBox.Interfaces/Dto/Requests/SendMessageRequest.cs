@@ -4,6 +4,10 @@ public class SendMessageRequest
 {
     public DateTime DateSent { get; set; }
 
+    public string FileBytes { get; set; }
+
+    public string FileName { get; set; }
+
     public string ReceiverId { get; set; }
 
     public string SenderId { get; set; }

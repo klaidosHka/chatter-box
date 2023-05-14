@@ -13,6 +13,11 @@ namespace ChatterBox.Services.Repositories
             _dbContext = cbDbContext;
         }
 
+        public async Task CommitAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+
         public IQueryable<ChatGroup> Get()
         {
             return _dbContext.ChatGroups;
@@ -30,6 +35,18 @@ namespace ChatterBox.Services.Repositories
             await _dbContext.ChatGroups.AddRangeAsync(groups);
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(ChatGroup group)
+        {
+            var existingGroup = await _dbContext.ChatGroups.FindAsync(group.Id);
+
+            if (existingGroup is not null)
+            {
+                _dbContext.ChatGroups.Remove(existingGroup);
+
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

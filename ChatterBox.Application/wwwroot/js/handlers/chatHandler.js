@@ -22,13 +22,17 @@ $(document).ready(() => {
     });
 
     $(document).on('click', chatElementIds.LISTED_USER, e => {
+        if (getContextValues().chatType == chatTypeIds.GROUP) {
+            return;
+        }
+
         handleContextSwitch($(e.currentTarget), chatTypeIds.DIRECT);
     });
 
     $(chatElementIds.HOME_BUTTON).click(e => {
-        handleChatViewChange(false);
-
         updateUsersForGroup(null);
+
+        handleChatViewChange(false);
     });
 });
 
@@ -38,6 +42,7 @@ function getContextValues() {
     return {
         chatType: contextObject.attr(contextAttributes.CHAT_TYPE),
         targetId: contextObject.attr(contextAttributes.TARGET_ID),
+        targetOwnerId: contextObject.attr(contextAttributes.TARGET_OWNER_ID),
         targetName: contextObject.attr(contextAttributes.TARGET_NAME),
         userId: contextObject.attr(contextAttributes.USER_ID),
         userName: contextObject.attr(contextAttributes.USER_NAME)
@@ -48,7 +53,7 @@ function handleButtonSend() {
     let input = $(chatElementIds.INPUT_TEXT);
     let message = input.val();
 
-    if (message == null || message.trim() === "") {
+    if ((message == null || message.trim() === "") && !image) {
         input.val(null);
 
         return;
@@ -59,7 +64,7 @@ function handleButtonSend() {
     input.val(null);
 }
 
-function handleContextSwitch(target, chatType) {    
+function handleContextSwitch(target, chatType) {
     let id = target.attr(targetAttributes.ID);
     let context = getContextValues();
 
@@ -79,6 +84,10 @@ function handleContextSwitch(target, chatType) {
     context.targetName = name;
     context.chatType = chatType;
 
+    if (chatType == chatTypeIds.GROUP) {
+        context.targetOwnerId = target.attr(targetAttributes.OWNER_ID);
+    }
+
     setContextValues(context);
 
     if (chatType == chatTypeIds.DIRECT) {
@@ -92,35 +101,44 @@ function handleContextSwitch(target, chatType) {
 
 function handleChatViewChange(enabled) {
     let context = getContextValues();
+
+    if (context.chatType == chatTypeIds.GROUP) {
+        $(chatElementIds.GROUP_MORE).fadeIn(150);
+    }
+
     let inputFile = $(chatElementIds.INPUT_FILE).removeClass("green");
     let inputText = $(chatElementIds.INPUT_TEXT).val(null);
     let messages = $(chatElementIds.MESSAGES);
     let targetName = $(chatElementIds.TARGET_NAME);
 
+    $(chatElementIds.LISTED_USER).each((i, u) => $(u).removeClass("d-none"));
+
+    $(chatElementIds.SEARCH).val(null);
+
     image = null;
 
     if (enabled === true) {
-        $(chatElementIds.BUTTON_SEND).fadeIn(300);
+        $(chatElementIds.BUTTON_SEND).fadeIn(150);
 
-        $(chatElementIds.INPUT_EMOTE).fadeIn(300);
+        $(chatElementIds.INPUT_EMOTE).fadeIn(150);
 
-        inputText.fadeIn(300);
+        inputText.fadeIn(150);
 
-        inputFile.fadeIn(300);
+        inputFile.fadeIn(150);
 
-        targetName.fadeOut(150, () =>
+        targetName.fadeOut(75, () =>
             targetName
                 .text(context.targetName)
-                .fadeIn(150)
+                .fadeIn(75)
         );
 
         if (messages.children().length === 0) {
-            messages.fadeIn(300, () => fillMessages());
+            messages.fadeIn(75, () => fillMessages());
         } else {
-            messages.fadeOut(300, () =>
+            messages.fadeOut(75, () =>
                 $(chatElementIds.MESSAGES)
                     .empty()
-                    .fadeIn(300, () => fillMessages())
+                    .fadeIn(75, () => fillMessages())
             );
         }
 
@@ -164,69 +182,85 @@ function handleChatViewChange(enabled) {
 
     context.chatType = "";
     context.targetId = "";
+    context.targetOwnerId = "";
     context.targetName = "";
 
     setContextValues(context);
 
     removeActiveTarget();
 
-    targetName
-        .fadeOut(300, () =>
-            targetName
-                .text(null)
-                .fadeIn(300)
-        );
+    targetName.fadeOut(75, () =>
+        targetName
+            .text(null)
+            .fadeIn(75)
+    );
+
+    $(chatElementIds.GROUP_MORE).fadeOut(150);
 
     $(chatElementIds.MESSAGES_PARENT)
         .removeClass("justify-content-start")
         .addClass("justify-content-center");
 
-    messages
-        .fadeOut(300, () =>
-            messages
-                .empty()
-                .append(
-                    $("<p>")
-                        .addClass("fw-bolder")
-                        .text("Who are you going to talk to today?")
-                )
-                .append(
-                    $("<p>")
-                        .addClass("fw-bolder")
-                        .text("Please select an user or a group to begin chatting.")
-                )
-                .fadeIn(300)
-        );
+    messages.fadeOut(150, () =>
+        messages
+            .empty()
+            .append(
+                $("<p>")
+                    .addClass("fw-bolder")
+                    .text("Who are you going to talk to today?")
+            )
+            .append(
+                $("<p>")
+                    .addClass("fw-bolder")
+                    .text("Please select an user or a group to begin chatting.")
+            )
+            .fadeIn(150)
+    );
 
-    $(chatElementIds.BUTTON_SEND).fadeOut(300);
+    $(chatElementIds.BUTTON_SEND).fadeOut(150);
 
-    $(chatElementIds.INPUT_EMOTE).fadeOut(300);
+    $(chatElementIds.INPUT_EMOTE).fadeOut(150);
 
-    inputText.fadeOut(300);
+    inputText.fadeOut(150);
 
-    inputFile.fadeOut(300);
+    inputFile.fadeOut(150);
 }
 
 function handleMessageReceive(request) {
-    if (!request.signalrId || (!request.receiverId || !request.senderId) && !request.groupId) {
-        return;
-    }
-
     let context = getContextValues();
 
+    if (
+        !request.signalrId ||
+        (!request.receiverId || !request.senderId) && !request.groupId ||
+        request.groupId && context.chatType != chatTypeIds.GROUP ||
+        !request.groupId && context.chatType != chatTypeIds.DIRECT
+    ) {
+        return;
+    }
+    
     if (
         !request.groupId &&
         context.chatType == chatTypeIds.DIRECT &&
         request.signalrId !== directChatsByUserId[context.targetId]
     ) {
-        let target = getUser(request.senderId);
+        let user = getUser(request.senderId);
 
-        target.attr(targetAttributes.UNREAD, true);
-
-        // add unread badge?
+        user.attr(targetAttributes.UNREAD, true);
 
         restructureUsersList();
 
+        return;
+    }
+    
+    if (
+        request.groupId &&
+        context.chatType == chatTypeIds.GROUP &&
+        request.signalrId !== groupChatsByGroupId[context.targetId]
+    ) {
+        let group = getGroup(request.groupId);
+
+        group.attr(targetAttributes.UNREAD, true);
+        
         return;
     }
 
@@ -256,8 +290,13 @@ function handleMessageReceive(request) {
                 )
                 .append(
                     $("<div>")
-                        .addClass("card-text")
+                        .addClass("card-text justify-text")
                         .text(request.text)
+                )
+                .append(
+                    request.imageLink
+                        ? $("<img class='message-img card-text rounded' style='height: 250px' alt='' src='" + request.imageLink + "'>")
+                        : null
                 )
         )
         .appendTo(messages);
@@ -271,11 +310,12 @@ function handleMessageReceive(request) {
 function handleMessageSend(message) {
     let context = getContextValues();
     let request;
-    let formData = new FormData();
 
     if (context.chatType == chatTypeIds.DIRECT) {
         request = {
             DateSent: new Date(),
+            FileBytes: null,
+            FileName: null,
             ReceiverId: context.targetId,
             SenderId: context.userId,
             SignalrId: directChatsByUserId[context.targetId],
@@ -284,6 +324,8 @@ function handleMessageSend(message) {
     } else {
         request = {
             DateSent: new Date(),
+            FileBytes: null,
+            FileName: null,
             GroupId: context.targetId,
             SenderId: context.userId,
             SignalrId: groupChatsByGroupId[context.targetId],
@@ -292,12 +334,26 @@ function handleMessageSend(message) {
     }
 
     if (image) {
-        formData.append("file", image);
+        request.FileName = image.name;
+
+        let reader = new FileReader();
+
+        reader.onload = function (event) {
+            request.FileBytes = event.target.result.split(',')[1];
+
+            getConnection()
+                .invoke(context.chatType == chatTypeIds.DIRECT ? "SendMessage" : "SendGroupMessage", request)
+                .catch(e => {
+                    console.log(e);
+                });
+        };
+        
+        reader.readAsDataURL(image);
+        
+        $(chatElementIds.INPUT_FILE).removeClass("green");
+    } else {
+        getConnection().invoke(context.chatType == chatTypeIds.DIRECT ? "SendMessage" : "SendGroupMessage", request);
     }
-
-    formData.append("request", JSON.stringify(request));
-
-    getConnection().invoke(context.chatType == chatTypeIds.DIRECT ? "SendMessage" : "SendGroupMessage", formData);
 }
 
 function removeActiveTarget() {
@@ -350,6 +406,8 @@ function setContextValues(context) {
 
     contextObject.attr(contextAttributes.TARGET_ID, context.targetId);
 
+    contextObject.attr(contextAttributes.TARGET_OWNER_ID, context.targetOwnerId);
+
     contextObject.attr(contextAttributes.TARGET_NAME, context.targetName);
 
     contextObject.attr(contextAttributes.USER_ID, context.userId);
@@ -371,40 +429,45 @@ function updateUsersForGroup(groupId) {
             let users = $(chatElementIds.USERS_LIST);
             let unreadValues = {};
 
-            users.find(chatElementIds.LISTED_USER).each((i, u) => {
-                unreadValues[$(u).attr(targetAttributes.ID)] = $(u).attr(targetAttributes.UNREAD);
-            });
+            users
+                .find(chatElementIds.LISTED_USER)
+                .each((i, u) => {
+                    unreadValues[$(u).attr(targetAttributes.ID)] = $(u).attr(targetAttributes.UNREAD);
+                });
 
-            users.find(chatElementIds.LISTED_USER).remove();
+            users.fadeOut(150, () => {
+                users
+                    .find(chatElementIds.LISTED_USER)
+                    .remove();
 
-            $.each(response, (i, u) => {
-                if (u.id === $(chatElementIds.CONTEXT_DATA).attr(contextAttributes.USER_ID)) {
-                    return;
-                }
+                $.each(response, (i, u) => {
+                    if (u.id === $(chatElementIds.CONTEXT_DATA).attr(contextAttributes.USER_ID)) {
+                        return;
+                    }
 
-                let oldUnread = unreadValues[u.id];
+                    let oldUnread = unreadValues[u.id];
 
-                $('<li class="d-flex flex-row context-users-list-user"></li>')
-                    .attr('data-own-id', u.id)
-                    .attr('data-own-name', u.userName)
-                    .attr('data-online', u.online.toString().toLowerCase())
-                    .attr('data-unread', oldUnread)
-                    .append($('<button class="w-100 d-flex user"></button>')
-                        .append($('<img class="rounded-circle avatar ' + (u.online == true ? "avatar-online" : "avatar-offline") + '">')
-                            .attr('src', u.avatarLink)
-                            .attr('alt', '')
+                    $('<li class="d-flex flex-row context-users-list-user"></li>')
+                        .attr('data-own-id', u.id)
+                        .attr('data-own-name', u.userName)
+                        .attr('data-online', u.online.toString().toLowerCase())
+                        .attr('data-unread', oldUnread)
+                        .append($('<button class="w-100 d-flex user"></button>')
+                            .append($('<img class="rounded-circle avatar ' + (u.online == true ? "avatar-online" : "avatar-offline") + '">')
+                                .attr('src', u.avatarLink)
+                                .attr('alt', '')
+                            )
+                            .append($('<div class="d-flex flex-column justify-content-center"></div>')
+                                .append($('<div class="justify-content-start"></div>')
+                                    .text(u.userName))
+                            )
                         )
-                        .append($('<div class="d-flex flex-column justify-content-center"></div>')
-                            .append($('<div class="justify-content-start"></div>')
-                                .text(u.userName))
-                        )
-                    )
-                    .appendTo(users);
-            });
+                        .appendTo(users);
+                });
 
-            restructureUsersList();
-        })
-        .fail(xhr => {
-            console.log(xhr.status);
+                restructureUsersList();
+
+                users.fadeIn(150);
+            });
         });
 }

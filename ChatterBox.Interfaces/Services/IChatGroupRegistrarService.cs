@@ -11,5 +11,9 @@ namespace ChatterBox.Interfaces.Services
         Task ImportAsync(ChatGroupRegistrar group);
 
         Task ImportAsync(IEnumerable<ChatGroupRegistrar> groups);
+
+        Task<bool> JoinGroupAsync(string userId, string groupId);
+        
+        Task<bool> LeaveGroupAsync(string userId, string groupId);
     }
 }

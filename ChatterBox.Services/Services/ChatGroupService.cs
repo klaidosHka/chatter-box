@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using ChatterBox.Interfaces.Dto;
+﻿using ChatterBox.Interfaces.Dto;
 using ChatterBox.Interfaces.Entities;
 using ChatterBox.Interfaces.Repositories;
 using ChatterBox.Interfaces.Services;
@@ -74,9 +73,28 @@ namespace ChatterBox.Services.Services
             return new CreateGroupResponse
             {
                 GroupId = group.Id,
-                MessageError = string.Empty,
                 Success = true
             };
+        }
+
+        public async Task<bool> DeleteGroupAsync(string groupId)
+        {
+            var group = GetAsNoTracking().FirstOrDefault(g => g.Id == groupId);
+
+            if (group is null)
+            {
+                return false;
+            }
+            
+            _registrarService
+                .GetAsNoTracking()
+                .Where(r => r.GroupId == groupId)
+                .ToList()
+                .ForEach(r => _registrarService.LeaveGroupAsync(r.UserId, r.GroupId).GetAwaiter().GetResult());
+
+            await _repository.RemoveAsync(group);
+
+            return true;
         }
 
         public IEnumerable<ChatGroup> Get()
@@ -137,6 +155,38 @@ namespace ChatterBox.Services.Services
         public async Task ImportAsync(IEnumerable<ChatGroup> groups)
         {
             await _repository.ImportAsync(groups);
+        }
+
+        public async Task<RenameGroupResponse> RenameGroupAsync(string groupId, string name)
+        {
+            if (name.Length > 10)
+            {
+                return new RenameGroupResponse
+                {
+                    MessageError = $"Name `{name}` is too long. Only 10 characters are allowed.",
+                    Success = false
+                };
+            }
+
+            var group = Get().FirstOrDefault(g => groupId == g.Id);
+
+            if (group is null)
+            {
+                return new RenameGroupResponse
+                {
+                    MessageError = "Group was not found.",
+                    Success = false
+                };
+            }
+
+            group.Name = name;
+
+            await _repository.CommitAsync();
+
+            return new RenameGroupResponse
+            {
+                Success = true
+            };
         }
     }
 }

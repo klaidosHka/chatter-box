@@ -2,5 +2,5 @@
 
 public interface IImageService
 {
-    public Task<string> UploadAsync(Stream stream, string fileName);
+    public Task<string> UploadAsync(byte[] fileBytes, string fileName);
 }

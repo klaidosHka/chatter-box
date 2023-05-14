@@ -7,6 +7,8 @@ namespace ChatterBox.Interfaces.Services
     {
         public Task<CreateGroupResponse> CreateAsync(CreateGroupRequest request);
         
+        Task<bool> DeleteGroupAsync(string groupId);
+        
         IEnumerable<ChatGroup> Get();
 
         IEnumerable<ChatGroup> GetAsNoTracking();
@@ -18,5 +20,7 @@ namespace ChatterBox.Interfaces.Services
         Task ImportAsync(ChatGroup group);
 
         Task ImportAsync(IEnumerable<ChatGroup> groups);
+        
+        Task<RenameGroupResponse> RenameGroupAsync(string groupId, string name);
     }
 }

@@ -14,38 +14,41 @@ namespace ChatterBox.Application.Areas.Main.Pages
         private readonly IChatGroupMessageService _chatGroupMessageService;
         private readonly IChatMessageService _chatMessageService;
         private readonly IChatUserService _chatUserService;
+        private readonly IChatGroupRegistrarService _registrarService;
+        private UserMapped? _currentUser;
+
+        public UserMapped CurrentUser
+        {
+            get => _currentUser ??= _chatUserService.GetMappedAsync(User).Result;
+            set => _currentUser = value;
+        }
 
         public IndexModel(
             IChatGroupService chatGroupService,
             IChatGroupMessageService chatGroupMessageService,
             IChatMessageService chatMessageService,
-            IChatUserService chatUserService
+            IChatUserService chatUserService,
+            IChatGroupRegistrarService registrarService
         )
         {
             _chatGroupService = chatGroupService;
             _chatGroupMessageService = chatGroupMessageService;
             _chatMessageService = chatMessageService;
             _chatUserService = chatUserService;
-        }
-
-        public async Task<UserMapped> GetCurrentUserAsync()
-        {
-            return await _chatUserService.GetMappedAsync(User);
+            _registrarService = registrarService;
         }
 
         public IQueryable<ChatGroup> GetGroupsJoined()
         {
             return _chatGroupService
-                .GetUserGroups(
-                    GetCurrentUserAsync().Result.User.Id
-                )
+                .GetUserGroups(CurrentUser.User.Id)
                 .AsQueryable();
         }
 
         public IQueryable<GroupMapped> GetGroups()
         {
             return _chatGroupService
-                .GetMapped(GetCurrentUserAsync().Result.User.Id)
+                .GetMapped(CurrentUser.User.Id)
                 .AsQueryable();
         }
 
@@ -58,9 +61,9 @@ namespace ChatterBox.Application.Areas.Main.Pages
                 .AsQueryable();
         }
 
-        public async Task OnGetAsync()
+        public void OnGet()
         {
-            if (User is null || await GetCurrentUserAsync() is null)
+            if (User is null || CurrentUser is null)
             {
                 HttpContext.Response.Cookies.Append("ChatterBoxCookie", "", new CookieOptions
                 {
@@ -121,11 +124,45 @@ namespace ChatterBox.Application.Areas.Main.Pages
         {
             var request = new CreateGroupRequest
             {
-                UserId = GetCurrentUserAsync().Result.User.Id,
+                UserId = CurrentUser.User.Id,
                 GroupName = groupName
             };
 
             var response = _chatGroupService.CreateAsync(request).Result;
+
+            return StatusCode(response.Success ? 200 : 400, response);
+        }
+
+        public IActionResult OnPostDeleteGroup(string groupId)
+        {
+            return StatusCode(
+                _chatGroupService.DeleteGroupAsync(groupId).Result
+                    ? 200
+                    : 400
+            );
+        }
+
+        public IActionResult OnPostJoinGroup(string groupId)
+        {
+            return StatusCode(
+                _registrarService.JoinGroupAsync(CurrentUser.User.Id, groupId).Result
+                    ? 200
+                    : 400
+            );
+        }
+
+        public IActionResult OnPostLeaveGroup(string groupId)
+        {
+            return StatusCode(
+                _registrarService.LeaveGroupAsync(CurrentUser.User.Id, groupId).Result
+                    ? 200
+                    : 400
+            );
+        }
+
+        public IActionResult OnPostRenameGroup(string groupId, string name)
+        {
+            var response = _chatGroupService.RenameGroupAsync(groupId, name).Result;
 
             return StatusCode(response.Success ? 200 : 400, response);
         }
