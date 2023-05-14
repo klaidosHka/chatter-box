@@ -249,6 +249,8 @@ function handleMessageReceive(request) {
 
         restructureUsersList();
 
+        playNotificationSound();
+
         return;
     }
     
@@ -305,6 +307,11 @@ function handleMessageReceive(request) {
         .find(chatElementIds.MESSAGES)
         .children(':last-child')[0]
         .scrollIntoView();
+}
+
+function playNotificationSound() {
+    var notificationSound = new Audio("/sounds/sound1.wav");
+    notificationSound.play();
 }
 
 function handleMessageSend(message) {
