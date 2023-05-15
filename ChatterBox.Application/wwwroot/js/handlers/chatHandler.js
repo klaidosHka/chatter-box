@@ -263,6 +263,8 @@ function handleMessageReceive(request) {
 
         group.attr(targetAttributes.UNREAD, true);
         
+        playNotificationSound();
+        
         return;
     }
 
@@ -309,11 +311,6 @@ function handleMessageReceive(request) {
         .scrollIntoView();
 }
 
-function playNotificationSound() {
-    var notificationSound = new Audio("/sounds/sound1.wav");
-    notificationSound.play();
-}
-
 function handleMessageSend(message) {
     let context = getContextValues();
     let request;
@@ -358,9 +355,15 @@ function handleMessageSend(message) {
         reader.readAsDataURL(image);
         
         $(chatElementIds.INPUT_FILE).removeClass("green");
+        
+        image = null;
     } else {
         getConnection().invoke(context.chatType == chatTypeIds.DIRECT ? "SendMessage" : "SendGroupMessage", request);
     }
+}
+
+function playNotificationSound() {
+    new Audio("/sounds/sound1.wav").play();
 }
 
 function removeActiveTarget() {
