@@ -350,13 +350,13 @@ function handleMessageSend(message) {
                 .catch(e => {
                     console.log(e);
                 });
+            
+            image = null;
         };
         
         reader.readAsDataURL(image);
         
         $(chatElementIds.INPUT_FILE).removeClass("green");
-        
-        image = null;
     } else {
         getConnection().invoke(context.chatType == chatTypeIds.DIRECT ? "SendMessage" : "SendGroupMessage", request);
     }
